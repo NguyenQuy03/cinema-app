@@ -20,6 +20,7 @@ func (status *MovieStatus) String() string {
 	return allMovieStatuses[*status]
 }
 
+// Loop movie statuses slice to get the string value
 func parseStrToMovieStatus(s string) (MovieStatus, error) {
 	for i := range allMovieStatuses {
 		if allMovieStatuses[i] == s {

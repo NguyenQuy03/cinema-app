@@ -23,7 +23,7 @@ func (biz *listMovieBiz) ListMovie(ctx context.Context, filter *model.Filter, pa
 	result, err := biz.storage.ListMovie(ctx, filter, paging)
 
 	if err != nil {
-		return nil, err
+		return nil, common.ErrCannotListEntity(err, model.MOVIE_ENTITY_NAME)
 	}
 
 	return result, nil

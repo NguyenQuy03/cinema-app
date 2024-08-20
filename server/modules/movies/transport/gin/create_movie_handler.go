@@ -16,9 +16,7 @@ func CreateMovie(db *gorm.DB) func(*gin.Context) {
 		var data model.MovieCreation
 
 		if err := ctx.ShouldBind(&data); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))
 
 			return
 		}
@@ -27,9 +25,7 @@ func CreateMovie(db *gorm.DB) func(*gin.Context) {
 		business := business.NewCreateMovieBiz(storage)
 
 		if err := business.CreateNewMovie(ctx.Request.Context(), &data); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, err)
 
 			return
 		}

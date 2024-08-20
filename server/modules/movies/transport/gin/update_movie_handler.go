@@ -19,17 +19,13 @@ func UpdateMovie(db *gorm.DB) func(*gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))
 
 			return
 		}
 
 		if err := ctx.ShouldBind(&data); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))
 
 			return
 		}
@@ -38,9 +34,7 @@ func UpdateMovie(db *gorm.DB) func(*gin.Context) {
 		business := business.NewUpdateMovieBiz(storage)
 
 		if err := business.UpdateMovieById(ctx.Request.Context(), id, &data); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, err)
 
 			return
 		}

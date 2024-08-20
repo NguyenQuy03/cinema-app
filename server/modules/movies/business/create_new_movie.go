@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/movies/model"
 )
 
@@ -27,7 +28,7 @@ func (biz *createMovieBiz) CreateNewMovie(ctx context.Context, data *model.Movie
 	}
 
 	if err := biz.storage.CreateMovie(ctx, data); err != nil {
-		return err
+		return common.ErrCannotCreateEntity(err, model.MOVIE_ENTITY_NAME)
 	}
 
 	return nil

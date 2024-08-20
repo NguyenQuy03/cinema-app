@@ -3,6 +3,7 @@ package sqlsv
 import (
 	"context"
 
+	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/movies/model"
 )
 
@@ -11,7 +12,7 @@ func (s *sqlStorage) DeleteMovie(ctx context.Context, conds map[string]interface
 		Table(model.Movie{}.TableName()).
 		Where(conds).
 		Updates(map[string]interface{}{"status": model.MovieInActiveStatus}).Error; err != nil {
-		return err
+		return common.ErrDB(err)
 	}
 
 	return nil

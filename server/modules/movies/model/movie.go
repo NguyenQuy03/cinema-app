@@ -6,9 +6,13 @@ import (
 	"github.com/NguyenQuy03/cinema-app/server/common"
 )
 
+const (
+	MOVIE_ENTITY_NAME = "movie"
+)
+
 var (
-	ErrTitleIsBlank = errors.New("title cannot be blank")
-	ErrMovieDeleted = errors.New("movie is deleted")
+	ErrMovieDeleted = common.NewCustomError(errors.New("movie is deleted"), "movie has been deleted", "MOVIE_DELETED_ERROR")
+	ErrTitleIsBlank = common.NewCustomError(errors.New("title is blank"), "title cannot be blank", "TITLE_BLANK_ERROR")
 )
 
 type Movie struct {
@@ -36,11 +40,11 @@ type MovieCreation struct {
 func (MovieCreation) TableName() string { return Movie{}.TableName() }
 
 type MovieUpdate struct {
-	Title       string  `json:"title" gorm:"column:title"`
-	Description *string `json:"description" gorm:"column:description"`
-	Duration    int     `json:"duration" gorm:"column:duration"`
-	Genre       string  `json:"genre" gorm:"column:genre"`
-	TrailerLink string  `json:"trailer_link" gorm:"column:trailer_link"`
+	Title       string `json:"title" gorm:"column:title"`
+	Description string `json:"description" gorm:"column:description"`
+	Duration    int    `json:"duration" gorm:"column:duration"`
+	Genre       string `json:"genre" gorm:"column:genre"`
+	TrailerLink string `json:"trailer_link" gorm:"column:trailer_link"`
 }
 
 func (MovieUpdate) TableName() string { return Movie{}.TableName() }

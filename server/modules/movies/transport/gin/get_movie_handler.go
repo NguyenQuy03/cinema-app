@@ -17,9 +17,7 @@ func GetMovie(db *gorm.DB) func(*gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))
 
 			return
 		}
@@ -30,9 +28,7 @@ func GetMovie(db *gorm.DB) func(*gin.Context) {
 		data, err := business.GetMovieById(ctx.Request.Context(), id)
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, err)
 
 			return
 		}

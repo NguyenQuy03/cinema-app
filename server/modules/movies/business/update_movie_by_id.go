@@ -3,6 +3,7 @@ package business
 import (
 	"context"
 
+	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/movies/model"
 )
 
@@ -22,7 +23,11 @@ func NewUpdateMovieBiz(storage UpdateMovieStorage) *updateMovieBiz {
 func (biz *updateMovieBiz) UpdateMovieById(ctx context.Context, id int, newData *model.MovieUpdate) error {
 	oldData, err := biz.storage.GetMovie(ctx, map[string]interface{}{"id": id})
 	if err != nil {
-		return err
+		if err == common.RecordNotFound {
+			return common.ErrCannotGetEntity(err, model.MOVIE_ENTITY_NAME)
+		}
+
+		return common.ErrCannotUpdateEntity(err, model.MOVIE_ENTITY_NAME)
 	}
 
 	if *oldData.Status == model.MovieInActiveStatus {
@@ -30,7 +35,7 @@ func (biz *updateMovieBiz) UpdateMovieById(ctx context.Context, id int, newData 
 	}
 
 	if err := biz.storage.UpdateMovie(ctx, map[string]interface{}{"id": id}, newData); err != nil {
-		return err
+		return common.ErrCannotUpdateEntity(err, model.MOVIE_ENTITY_NAME)
 	}
 
 	return nil

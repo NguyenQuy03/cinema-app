@@ -3,6 +3,7 @@ package business
 import (
 	"context"
 
+	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/movies/model"
 )
 
@@ -23,7 +24,11 @@ func (biz *deleteMovieBiz) DeleteMovieById(ctx context.Context, id int) error {
 	oldData, err := biz.storage.GetMovie(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
-		return err
+		if err == common.RecordNotFound {
+			return common.ErrCannotGetEntity(err, model.MOVIE_ENTITY_NAME)
+		}
+
+		return common.ErrCannotDeleteEntity(err, model.MOVIE_ENTITY_NAME)
 	}
 
 	if *oldData.Status == model.MovieInActiveStatus {
@@ -31,7 +36,7 @@ func (biz *deleteMovieBiz) DeleteMovieById(ctx context.Context, id int) error {
 	}
 
 	if err := biz.storage.DeleteMovie(ctx, map[string]interface{}{"id": id}); err != nil {
-		return err
+		return common.ErrCannotDeleteEntity(err, model.MOVIE_ENTITY_NAME)
 	}
 
 	return nil

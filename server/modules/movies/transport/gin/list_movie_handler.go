@@ -16,9 +16,7 @@ func ListMovie(db *gorm.DB) func(*gin.Context) {
 		var p common.Paging
 
 		if err := ctx.ShouldBind(&p); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))
 
 			return
 		}
@@ -28,9 +26,7 @@ func ListMovie(db *gorm.DB) func(*gin.Context) {
 		var filter model.Filter
 
 		if err := ctx.ShouldBind(&filter); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))
 
 			return
 		}
@@ -41,9 +37,7 @@ func ListMovie(db *gorm.DB) func(*gin.Context) {
 		data, err := business.ListMovie(ctx.Request.Context(), &filter, &p)
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, err)
 
 			return
 		}

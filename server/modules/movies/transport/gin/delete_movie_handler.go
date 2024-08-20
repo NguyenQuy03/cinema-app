@@ -16,9 +16,7 @@ func DeleteMovie(db *gorm.DB) func(*gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))
 
 			return
 		}
@@ -27,9 +25,7 @@ func DeleteMovie(db *gorm.DB) func(*gin.Context) {
 		business := business.NewDeleteMovieBiz(storage)
 
 		if err := business.DeleteMovieById(ctx.Request.Context(), id); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusBadRequest, err)
 
 			return
 		}

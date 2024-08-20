@@ -3,6 +3,7 @@ package business
 import (
 	"context"
 
+	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/movies/model"
 )
 
@@ -24,7 +25,7 @@ func (biz *getMovieBiz) GetMovieById(ctx context.Context, id int) (*model.Movie,
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, common.ErrCannotGetEntity(err, model.MOVIE_ENTITY_NAME)
 	}
 
 	return result, nil
