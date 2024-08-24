@@ -1,48 +1,31 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
-	"path/filepath"
 
-	gintrans "github.com/NguyenQuy03/cinema-app/server/modules/movies/transport/gin"
+	"github.com/NguyenQuy03/cinema-app/server/configs"
+	"github.com/NguyenQuy03/cinema-app/server/db"
+	"github.com/NguyenQuy03/cinema-app/server/routes"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
-	"gorm.io/driver/sqlserver"
-	"gorm.io/gorm"
 )
 
 func main() {
-	// Connect to DB
-	err := godotenv.Load(filepath.Join("../", ".env"))
+	// Load environment variables
+	configs.LoadEnv()
 
+	// Initialize the database connection
+	db, err := db.InitSQLServerDB()
 	if err != nil {
-		fmt.Println("Error loading .env file")
+		log.Fatalf("%v", err)
 	}
 
-	dsn := os.Getenv("DB_CONN_STR")
-	db, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
-
-	if err != nil {
-		fmt.Println("Failed to connect to database:", err)
-		return
-	}
-
+	// Setup the router
 	router := gin.Default()
 
-	v1 := router.Group("v1")
-	{
-		movies := v1.Group("movies")
-		{
-			movies.POST("", gintrans.CreateMovie(db))
-			movies.GET("", gintrans.ListMovie(db))
-			movies.GET("/:id", gintrans.GetMovie(db))
-			movies.PATCH("/:id", gintrans.UpdateMovie(db))
-			movies.DELETE("/:id", gintrans.DeleteMovie(db))
-		}
-	}
+	// Setup v1 routes
+	routes.SetupV1Router(router, db)
 
 	// Run the server on port 8080
-	router.Run(":8080")
-
+	router.Run(":" + os.Getenv("PORT"))
 }

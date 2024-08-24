@@ -35,12 +35,13 @@ func NewErrorResponse(rootErr error, message, log string, key string) *AppError 
 	}
 }
 
-func NewUnauthorized(rootErr error, message, log string) *AppError {
+func NewUnauthorized(rootErr error, message, log, key string) *AppError {
 	return &AppError{
 		StatusCode: http.StatusUnauthorized,
 		RootErr:    rootErr,
 		Message:    message,
 		Log:        log,
+		Key:        key,
 	}
 }
 
@@ -110,4 +111,4 @@ func (e *AppError) Error() string {
 	return e.RootErr.Error()
 }
 
-var RecordNotFound = errors.New("record not found")
+var ErrRecordNotFound = errors.New("record not found")
