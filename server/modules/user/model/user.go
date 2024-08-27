@@ -13,6 +13,7 @@ const (
 var (
 	ErrEmailInvalid = common.NewCustomError(errors.New("email is invalid"), "email is invalid", "EMAIL_INVALID_ERROR")
 	ErrHashPassword = common.ErrInternal(errors.New("error hash password"))
+	ErrUserNotExist = common.NewCustomError(errors.New("user is not exist"), "user is not exist", "USER_NOT_EXIST_ERROR")
 
 	ErrUserExisted        = common.NewCustomError(errors.New("user is existed"), "the email has existed, please choose another", "USER_EXISTED_ERROR")
 	ErrEmailOrPassMissing = common.NewCustomError(

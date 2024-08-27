@@ -32,7 +32,7 @@ func AuthenticateUser(db *gorm.DB) func(*gin.Context) {
 		}
 
 		ctx.SetSameSite(http.SameSiteLaxMode)
-		ctx.SetCookie("refresh_token", authResponse.RefreshToken, int(model.RefreshTokenMaxAge), "", "", false, true)
+		ctx.SetCookie("refresh_token", authResponse.RefreshToken, int(model.RefreshTokenMaxAge.Unix()), "", "", false, true)
 
 		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(authResponse))
 	}

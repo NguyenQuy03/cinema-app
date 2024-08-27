@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/NguyenQuy03/cinema-app/server/middleware"
 	ginMovieTrans "github.com/NguyenQuy03/cinema-app/server/modules/movie/transport/gin"
 	ginUserTrans "github.com/NguyenQuy03/cinema-app/server/modules/user/transport/gin"
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,7 @@ func SetupV1Router(router *gin.Engine, db *gorm.DB) *gin.Engine {
 }
 
 func movieRoute(v1 *gin.RouterGroup, db *gorm.DB) {
-	movie := v1.Group("movies")
+	movie := v1.Group("movies", middleware.RequireAuth(db))
 	{
 		movie.POST("", ginMovieTrans.CreateMovie(db))
 		movie.GET("", ginMovieTrans.ListMovie(db))
@@ -29,7 +30,7 @@ func movieRoute(v1 *gin.RouterGroup, db *gorm.DB) {
 }
 
 func userRoute(v1 *gin.RouterGroup, db *gorm.DB) {
-	user := v1.Group("users")
+	user := v1.Group("auth")
 	{
 		user.POST("/register", ginUserTrans.RegisterUser(db))
 		user.POST("/login", ginUserTrans.AuthenticateUser(db))
