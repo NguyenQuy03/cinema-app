@@ -35,12 +35,20 @@ func NewErrorResponse(rootErr error, message, log string, key string) *AppError 
 	}
 }
 
-func NewUnauthorized(rootErr error, message, log, key string) *AppError {
+func NewUnauthorized(rootErr error, message, key string) *AppError {
 	return &AppError{
 		StatusCode: http.StatusUnauthorized,
 		RootErr:    rootErr,
 		Message:    message,
-		Log:        log,
+		Key:        key,
+	}
+}
+
+func NewConflict(rootErr error, message, key string) *AppError {
+	return &AppError{
+		StatusCode: http.StatusConflict,
+		RootErr:    rootErr,
+		Message:    message,
 		Key:        key,
 	}
 }
@@ -107,6 +115,7 @@ func (e *AppError) RootError() error {
 	return e.RootErr
 }
 
+// Implement this method to customize error
 func (e *AppError) Error() string {
 	return e.RootErr.Error()
 }

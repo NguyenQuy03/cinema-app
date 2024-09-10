@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
-	"github.com/NguyenQuy03/cinema-app/server/modules/user/model"
-	"github.com/NguyenQuy03/cinema-app/server/utils"
+	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
+	"github.com/NguyenQuy03/cinema-app/server/utils/mailUtil"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -28,7 +28,7 @@ func (biz *registerUserBiz) RegisterUser(ctx context.Context, data *model.UserRe
 	email := data.Email
 	password := data.Password
 
-	if !utils.IsValidEmail(email) {
+	if !mailUtil.IsValidEmail(email) {
 		return model.ErrEmailInvalid
 	}
 

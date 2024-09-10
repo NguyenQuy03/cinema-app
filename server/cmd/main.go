@@ -8,6 +8,7 @@ import (
 	"github.com/NguyenQuy03/cinema-app/server/db"
 	"github.com/NguyenQuy03/cinema-app/server/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -15,16 +16,23 @@ func main() {
 	configs.LoadEnv()
 
 	// Initialize the database connection
-	db, err := db.InitSQLServerDB()
+	sqlserverDB, err := db.InitSQLServerDB()
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
+
+	opt, err := db.InitRedisDB()
+	if err != nil {
+		panic(err)
+	}
+
+	redisDB := redis.NewClient(opt)
 
 	// Setup the router
 	router := gin.Default()
 
 	// Setup v1 routes
-	routes.SetupV1Router(router, db)
+	routes.SetupV1Router(router, sqlserverDB, redisDB)
 
 	// Run the server on port 8080
 	router.Run(":" + os.Getenv("PORT"))

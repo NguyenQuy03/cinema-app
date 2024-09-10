@@ -2,37 +2,39 @@ package routes
 
 import (
 	"github.com/NguyenQuy03/cinema-app/server/middleware"
+	ginUserTrans "github.com/NguyenQuy03/cinema-app/server/modules/auth/transport/gin"
 	ginMovieTrans "github.com/NguyenQuy03/cinema-app/server/modules/movie/transport/gin"
-	ginUserTrans "github.com/NguyenQuy03/cinema-app/server/modules/user/transport/gin"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
-func SetupV1Router(router *gin.Engine, db *gorm.DB) *gin.Engine {
+func SetupV1Router(router *gin.Engine, db *gorm.DB, redisDB *redis.Client) *gin.Engine {
 	v1 := router.Group("v1")
 	{
-		movieRoute(v1, db)
-		userRoute(v1, db)
+		setupMovieRoutes(v1, db, redisDB)
+		setupAuthRoutes(v1, db, redisDB)
 	}
 
 	return router
 }
 
-func movieRoute(v1 *gin.RouterGroup, db *gorm.DB) {
-	movie := v1.Group("movies", middleware.RequireAuth(db))
+func setupMovieRoutes(v1 *gin.RouterGroup, db *gorm.DB, redisDB *redis.Client) {
+	movies := v1.Group("movies", middleware.RequireAuth(db, redisDB))
 	{
-		movie.POST("", ginMovieTrans.CreateMovie(db))
-		movie.GET("", ginMovieTrans.ListMovie(db))
-		movie.GET("/:id", ginMovieTrans.GetMovie(db))
-		movie.PATCH("/:id", ginMovieTrans.UpdateMovie(db))
-		movie.DELETE("/:id", ginMovieTrans.DeleteMovie(db))
+		movies.POST("", ginMovieTrans.CreateMovie(db))
+		movies.GET("", ginMovieTrans.ListMovie(db))
+		movies.GET("/:id", ginMovieTrans.GetMovie(db))
+		movies.PATCH("/:id", ginMovieTrans.UpdateMovie(db))
+		movies.DELETE("/:id", ginMovieTrans.DeleteMovie(db))
 	}
 }
 
-func userRoute(v1 *gin.RouterGroup, db *gorm.DB) {
-	user := v1.Group("auth")
+func setupAuthRoutes(v1 *gin.RouterGroup, db *gorm.DB, redisDB *redis.Client) {
+	auth := v1.Group("auth")
 	{
-		user.POST("/register", ginUserTrans.RegisterUser(db))
-		user.POST("/login", ginUserTrans.AuthenticateUser(db))
+		auth.POST("/register", ginUserTrans.RegisterUser(db))
+		auth.POST("/login", ginUserTrans.AuthenticateUser(db, redisDB))
+		auth.POST("/refresh-token", ginUserTrans.RefreshToken(db, redisDB))
 	}
 }

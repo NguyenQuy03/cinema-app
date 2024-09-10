@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
-	"github.com/NguyenQuy03/cinema-app/server/modules/user/business"
-	"github.com/NguyenQuy03/cinema-app/server/modules/user/model"
-	"github.com/NguyenQuy03/cinema-app/server/modules/user/storage/sqlsv"
+	"github.com/NguyenQuy03/cinema-app/server/modules/auth/business"
+	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
+	"github.com/NguyenQuy03/cinema-app/server/modules/auth/storage/sqlsv"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

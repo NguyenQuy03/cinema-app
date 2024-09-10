@@ -15,7 +15,7 @@ var (
 	ErrHashPassword = common.ErrInternal(errors.New("error hash password"))
 	ErrUserNotExist = common.NewCustomError(errors.New("user is not exist"), "user is not exist", "USER_NOT_EXIST_ERROR")
 
-	ErrUserExisted        = common.NewCustomError(errors.New("user is existed"), "the email has existed, please choose another", "USER_EXISTED_ERROR")
+	ErrUserExisted        = common.NewConflict(errors.New("user is existed"), "the email has existed, please choose another", "USER_EXISTED_ERROR")
 	ErrEmailOrPassMissing = common.NewCustomError(
 		errors.New("missing username or password"),
 		"missing username or password",

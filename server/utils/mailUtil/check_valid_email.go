@@ -1,4 +1,4 @@
-package utils
+package mailUtil
 
 import "regexp"
 

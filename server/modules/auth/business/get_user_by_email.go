@@ -3,7 +3,8 @@ package business
 import (
 	"context"
 
-	"github.com/NguyenQuy03/cinema-app/server/modules/user/model"
+	"github.com/NguyenQuy03/cinema-app/server/common"
+	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
 )
 
 type GetUserStorage interface {
@@ -23,7 +24,7 @@ func (biz *getUserBiz) GetUserByEmail(ctx context.Context, email string) (*model
 	user, err := biz.storage.GetUser(ctx, map[string]interface{}{"email": email})
 
 	if err != nil {
-		return nil, model.ErrUserNotExist
+		return nil, common.ErrCannotGetEntity(err, model.UserEntityName)
 	}
 
 	return user, nil
