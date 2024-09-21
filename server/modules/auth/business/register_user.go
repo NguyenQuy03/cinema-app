@@ -2,6 +2,7 @@ package business
 
 import (
 	"context"
+	"strings"
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
@@ -25,7 +26,7 @@ func NewRegisterUserBiz(storage RegisterUserStorage) *registerUserBiz {
 }
 
 func (biz *registerUserBiz) RegisterUser(ctx context.Context, data *model.UserRegister) error {
-	email := data.Email
+	email := strings.TrimSpace(data.Email)
 	password := data.Password
 
 	if !mailUtil.IsValidEmail(email) {

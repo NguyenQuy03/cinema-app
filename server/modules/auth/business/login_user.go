@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
-	"github.com/NguyenQuy03/cinema-app/server/utils/jwtUtil"
-	"github.com/NguyenQuy03/cinema-app/server/utils/mailUtil"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -30,14 +28,10 @@ func NewLoginUserBiz(userStorage GetUserStorage, storeSessionStorage StoreSessio
 func (biz *loginUserBiz) AuthenticateUser(ctx context.Context, data *model.UserLogin, authResponse *model.AuthResponse) error {
 
 	email := strings.TrimSpace(data.Email)
-	password := strings.TrimSpace(data.Password)
+	password := data.Password
 
 	if email == "" || password == "" {
 		return model.ErrEmailOrPassMissing
-	}
-
-	if !mailUtil.IsValidEmail(email) {
-		return model.ErrEmailInvalid
 	}
 
 	// Find User by email
@@ -52,7 +46,8 @@ func (biz *loginUserBiz) AuthenticateUser(ctx context.Context, data *model.UserL
 	}
 
 	// Genarate Tokens
-	accessToken, err := jwtUtil.GenerateAccessToken(user)
+	handleTokenBiz := HandleTokenBiz{}
+	accessToken, err := handleTokenBiz.GenerateAccessToken(user)
 
 	if err != nil {
 		return model.ErrGenerateToken
@@ -60,7 +55,7 @@ func (biz *loginUserBiz) AuthenticateUser(ctx context.Context, data *model.UserL
 
 	authResponse.AccessToken = accessToken
 
-	refreshToken, err := jwtUtil.GenerateRefreshToken(user)
+	refreshToken, err := handleTokenBiz.GenerateRefreshToken(user)
 
 	authResponse.RefreshToken = refreshToken
 
@@ -73,8 +68,7 @@ func (biz *loginUserBiz) AuthenticateUser(ctx context.Context, data *model.UserL
 		ctx,
 		user.Email,
 		map[string]interface{}{
-			"access_token":  accessToken,
-			"refresh_token": refreshToken,
+			model.RefreshToken: refreshToken,
 		},
 		time.Until(model.RefreshTokenMaxAge),
 	)

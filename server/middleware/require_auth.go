@@ -2,15 +2,12 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/business"
-	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/storage/sqlsv"
-	"github.com/NguyenQuy03/cinema-app/server/utils/jwtUtil"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -28,46 +25,35 @@ func RequireAuth(db *gorm.DB, redisDB *redis.Client) func(*gin.Context) {
 
 		tokenString := strings.Split(bearerToken, " ")[1]
 
-		token, err := jwtUtil.ValidateToken(tokenString)
+		handlerTokenBiz := business.HandleTokenBiz{}
+		token, err := handlerTokenBiz.ValidateToken(tokenString)
 
 		if err != nil || token == nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, err)
 			return
 		}
 
-		// Extract email from token
-		email, err := jwtUtil.ExtractEmail(token)
-
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, err)
-			return
-		}
-
-		// Compare with existed access_token is redis
-		key := fmt.Sprintf("user_sessions:%s", email)
-		res, err := redisDB.HGetAll(c.Request.Context(), key).Result()
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, err)
-			return
-		}
-
-		if !strings.EqualFold(res["access_token"], tokenString) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, model.ErrInvalidToken)
-			return
-		}
-
-		// Find and store user's current context
-		storage := sqlsv.NewSQLStorage(db)
-		business := business.NewGetUserBiz(storage)
-
-		user, err := business.GetUserByEmail(c.Request.Context(), email)
-
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, err)
-			return
-		}
-
+		// Store current use context
 		if _, exists := c.Get("user"); !exists {
+			// Extract email from token
+			email, err := handlerTokenBiz.ExtractEmail(token)
+
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, err)
+				return
+			}
+
+			// Find and store user's current context
+			storage := sqlsv.NewSQLStorage(db)
+			business := business.NewGetUserBiz(storage)
+
+			user, err := business.GetUserByEmail(c.Request.Context(), email)
+
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, err)
+				return
+			}
+
 			c.Set("user", user)
 		}
 

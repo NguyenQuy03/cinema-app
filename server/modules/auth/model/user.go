@@ -32,6 +32,7 @@ var (
 
 type User struct {
 	common.SQLModel
+	UserId      int    `json:"user_id" gorm:"column:user_id"`
 	Email       string `json:"email" gorm:"column:email"`
 	Password    string `json:"password" gorm:"column:password"`
 	FullName    string `json:"full_name" gorm:"column:full_name"`
@@ -39,10 +40,10 @@ type User struct {
 	Role        string `json:"role" gorm:"column:role"`
 }
 
-func (User) TableName() string { return "users" }
+func (User) TableName() string { return "user" }
 
 type UserRegister struct {
-	Id          int    `json:"-" gorm:"column:id"`
+	UserId      int    `gorm:"column:user_id;primaryKey"`
 	Email       string `json:"email" gorm:"column:email"`
 	Password    string `json:"password" gorm:"column:password"`
 	FullName    string `json:"full_name" gorm:"column:full_name"`

@@ -8,7 +8,6 @@ import (
 
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
 	"github.com/NguyenQuy03/cinema-app/server/utils/cookieUtil"
-	"github.com/NguyenQuy03/cinema-app/server/utils/jwtUtil"
 )
 
 type UpdateSessionStorage interface {
@@ -31,7 +30,7 @@ func NewRefreshTokenBiz(getUserStorage GetUserStorage, updateSessionStorage Upda
 func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, authResponse *model.AuthResponse) error {
 
 	// Get refresh_token from cookie
-	refreshToken, err := cookieUtil.GetCookie(req, "refresh_token")
+	refreshToken, err := cookieUtil.GetCookie(req, model.RefreshToken)
 
 	if err != nil {
 		return err
@@ -41,32 +40,41 @@ func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, a
 		return model.ErrRequireLogin
 	}
 
-	// Validate token
-	token, err := jwtUtil.ValidateToken(refreshToken)
+	// Validate request token
+	handleTokenBiz := HandleTokenBiz{}
+	token, err := handleTokenBiz.ValidateToken(refreshToken)
 
 	if err != nil || token == nil {
 		return err
 	}
 
 	// Extract email from token
-	email, err := jwtUtil.ExtractEmail(token)
+	email, err := handleTokenBiz.ExtractEmail(token)
 
 	if err != nil {
 		return err
 	}
 
-	// Get prev token in redis
+	// Get prev refresh token in redis
 	userSession, err := biz.updateSessionStorage.GetUserSession(c, email)
 
 	if err != nil {
 		return err
 	}
 
+	prevRefreshToken := userSession[model.RefreshToken]
+
+	// Handle Expired Token
+	if prevRefreshToken == "" {
+		return model.ErrRequireLogin
+	}
+
 	// Validate with prev refresh token
-	if !strings.EqualFold(userSession["refresh_token"], refreshToken) {
+	if !strings.EqualFold(prevRefreshToken, refreshToken) {
 		return model.ErrInvalidToken
 	}
 
+	// Generate and return new access token
 	user, err := biz.getUserStorage.GetUser(c, map[string]interface{}{
 		"email": email,
 	})
@@ -75,14 +83,11 @@ func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, a
 		return err
 	}
 
-	accessToken, err := jwtUtil.GenerateAccessToken(user)
+	accessToken, err := handleTokenBiz.GenerateAccessToken(user)
 
 	if err != nil {
 		return err
 	}
-
-	// Update token in redis and return new token for user
-	biz.updateSessionStorage.StoreUserSession(c, email, map[string]interface{}{"access_token": accessToken}, 0)
 
 	authResponse.AccessToken = accessToken
 

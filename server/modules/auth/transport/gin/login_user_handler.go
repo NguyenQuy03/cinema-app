@@ -36,7 +36,7 @@ func AuthenticateUser(db *gorm.DB, redisDB *redis.Client) func(*gin.Context) {
 			return
 		}
 
-		cookieUtil.SetCookie(ctx.Writer, "refresh_token", authResponse.RefreshToken, int(model.RefreshTokenMaxAge.Unix()))
+		cookieUtil.SetCookie(ctx.Writer, model.RefreshToken, authResponse.RefreshToken, int(model.RefreshTokenMaxAge.Unix()))
 
 		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(authResponse))
 	}

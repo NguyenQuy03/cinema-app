@@ -1,8 +1,6 @@
 package model
 
 import (
-	"errors"
-
 	"github.com/NguyenQuy03/cinema-app/server/common"
 )
 
@@ -10,13 +8,9 @@ const (
 	MovieEntityName = "movie"
 )
 
-var (
-	ErrMovieDeleted      = common.NewCustomError(errors.New("movie is deleted"), "movie has been deleted", "MOVIE_DELETED_ERROR")
-	ErrMovieTitleIsBlank = common.NewCustomError(errors.New("title is blank"), "title cannot be blank", "TITLE_BLANK_ERROR")
-)
-
 type Movie struct {
 	common.SQLModel
+	MovieId     int          `json:"movie_id" gorm:"column:movie_id"`
 	Title       string       `json:"title" gorm:"column:title"`
 	Description string       `json:"description" gorm:"column:description"`
 	Duration    int          `json:"duration" gorm:"column:duration"`
@@ -25,10 +19,10 @@ type Movie struct {
 	Status      *MovieStatus `json:"status" gorm:"column:status"`
 }
 
-func (Movie) TableName() string { return "movies" }
+func (Movie) TableName() string { return "movie" }
 
 type MovieCreation struct {
-	Id          int          `json:"-" gorm:"column:id"`
+	MovieId     int          `json:"-" gorm:"column:movie_id"`
 	Title       string       `json:"title" gorm:"column:title"`
 	Description string       `json:"description" gorm:"column:description"`
 	Duration    int          `json:"duration" gorm:"column:duration"`
