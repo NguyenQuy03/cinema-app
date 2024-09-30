@@ -1,6 +1,8 @@
-package sqlsv
+package mssql
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type sqlStorage struct {
 	db *gorm.DB

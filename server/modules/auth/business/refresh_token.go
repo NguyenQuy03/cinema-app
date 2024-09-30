@@ -3,75 +3,69 @@ package business
 import (
 	"context"
 	"net/http"
-	"strings"
-	"time"
 
+	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
-	"github.com/NguyenQuy03/cinema-app/server/utils/cookieUtil"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type UpdateSessionStorage interface {
 	GetUserSession(ctx context.Context, email string) (map[string]string, error)
-	StoreUserSession(ctx context.Context, key string, infors map[string]interface{}, expiration time.Duration) error
+	StoreUserSession(ctx context.Context, key string, infors map[string]interface{}, expiration int) error
+}
+
+type JWTHandler interface {
+	ValidateToken(tokenString string) (*jwt.Token, error)
+	GenerateAccessToken(sub string) (string, int, error)
+	GenerateRefreshToken(sub string) (string, int, error)
+	ParseToken(tokenString string) (claims *jwt.RegisteredClaims, err error)
+	CompareToken(token1, token2 string) (bool, error)
 }
 
 type refreshTokenBiz struct {
 	getUserStorage       GetUserStorage
 	updateSessionStorage UpdateSessionStorage
+	jwtHandler           JWTHandler
 }
 
-func NewRefreshTokenBiz(getUserStorage GetUserStorage, updateSessionStorage UpdateSessionStorage) *refreshTokenBiz {
+func NewRefreshTokenBiz(getUserStorage GetUserStorage, updateSessionStorage UpdateSessionStorage, jwtHandler JWTHandler) *refreshTokenBiz {
 	return &refreshTokenBiz{
 		getUserStorage:       getUserStorage,
 		updateSessionStorage: updateSessionStorage,
+		jwtHandler:           jwtHandler,
 	}
 }
 
-func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, authResponse *model.AuthResponse) error {
-
-	// Get refresh_token from cookie
-	refreshToken, err := cookieUtil.GetCookie(req, model.RefreshToken)
-
-	if err != nil {
-		return err
-	}
-
-	if refreshToken == "" {
-		return model.ErrRequireLogin
-	}
-
+func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, refreshToken string) (*model.AuthResponse, error) {
 	// Validate request token
-	handleTokenBiz := HandleTokenBiz{}
-	token, err := handleTokenBiz.ValidateToken(refreshToken)
+	token, err := biz.jwtHandler.ValidateToken(refreshToken)
 
 	if err != nil || token == nil {
-		return err
+		return nil, err
 	}
 
 	// Extract email from token
-	email, err := handleTokenBiz.ExtractEmail(token)
+	claims, err := biz.jwtHandler.ParseToken(refreshToken)
+	email := claims.Subject
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Get prev refresh token in redis
-	userSession, err := biz.updateSessionStorage.GetUserSession(c, email)
+	userSession, err := biz.updateSessionStorage.GetUserSession(c, claims.Subject)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	prevRefreshToken := userSession[model.RefreshToken]
+	prevRefreshToken := userSession[common.RefreshToken]
 
-	// Handle Expired Token
-	if prevRefreshToken == "" {
-		return model.ErrRequireLogin
-	}
+	// Compare Tokens
+	_, err = biz.jwtHandler.CompareToken(prevRefreshToken, refreshToken)
 
-	// Validate with prev refresh token
-	if !strings.EqualFold(prevRefreshToken, refreshToken) {
-		return model.ErrInvalidToken
+	if err != nil {
+		return nil, err
 	}
 
 	// Generate and return new access token
@@ -80,16 +74,19 @@ func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, a
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	accessToken, err := handleTokenBiz.GenerateAccessToken(user)
+	accessToken, expAcTokenSecs, err := biz.jwtHandler.GenerateAccessToken(user.Email)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	authResponse.AccessToken = accessToken
-
-	return nil
+	return &model.AuthResponse{
+		AccessToken: model.Token{
+			Token:     accessToken,
+			ExpiredIn: expAcTokenSecs,
+		},
+	}, nil
 }

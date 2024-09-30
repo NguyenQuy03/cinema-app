@@ -6,7 +6,7 @@ import (
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/movie/business"
-	"github.com/NguyenQuy03/cinema-app/server/modules/movie/storage/sqlsv"
+	"github.com/NguyenQuy03/cinema-app/server/modules/movie/storage/mssql"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -21,7 +21,7 @@ func DeleteMovie(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		storage := sqlsv.NewSQLStorage(db)
+		storage := mssql.NewSQLStorage(db)
 		business := business.NewDeleteMovieBiz(storage)
 
 		if err := business.DeleteMovieById(ctx.Request.Context(), id); err != nil {

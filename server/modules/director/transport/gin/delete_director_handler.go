@@ -5,13 +5,13 @@ import (
 	"strconv"
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
-	"github.com/NguyenQuy03/cinema-app/server/modules/genre/business"
-	"github.com/NguyenQuy03/cinema-app/server/modules/genre/storage/mssql"
+	"github.com/NguyenQuy03/cinema-app/server/modules/director/business"
+	"github.com/NguyenQuy03/cinema-app/server/modules/director/storage/mssql"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func DeleteGenre(db *gorm.DB) gin.HandlerFunc {
+func DeleteDirector(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 
@@ -21,9 +21,9 @@ func DeleteGenre(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		store := mssql.NewSQLStorage(db)
-		biz := business.NewDeleteGenreBiz(store)
+		biz := business.NewDeleteDirectorBiz(store)
 
-		if err := biz.DeleteGenreById(c, id); err != nil {
+		if err := biz.DeleteDirectorById(c, id); err != nil {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}

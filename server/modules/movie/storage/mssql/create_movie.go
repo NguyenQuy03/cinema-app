@@ -1,4 +1,4 @@
-package sqlsv
+package mssql
 
 import (
 	"context"

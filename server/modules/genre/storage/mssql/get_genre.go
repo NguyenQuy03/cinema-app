@@ -1,22 +1,21 @@
-package sqlsv
+package mssql
 
 import (
 	"context"
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
-	"github.com/NguyenQuy03/cinema-app/server/modules/movie/model"
+	"github.com/NguyenQuy03/cinema-app/server/modules/genre/model"
 	"gorm.io/gorm"
 )
 
-func (s *sqlStorage) GetMovie(ctx context.Context, conds map[string]interface{}) (*model.Movie, error) {
-	var data model.Movie
+func (s *sqlStorage) GetGenre(ctx context.Context, conds map[string]interface{}) (*model.Genre, error) {
+	var data model.Genre
 
 	if err := s.db.Where(conds).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrRecordNotFound
 		}
 
-		return nil, common.ErrDB(err)
 	}
 
 	return &data, nil

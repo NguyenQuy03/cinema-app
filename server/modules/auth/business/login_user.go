@@ -3,64 +3,61 @@ package business
 import (
 	"context"
 	"strings"
-	"time"
 
+	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type StoreSessionStorage interface {
-	StoreUserSession(ctx context.Context, key string, infors map[string]interface{}, expiration time.Duration) error
+	StoreUserSession(ctx context.Context, key string, infors map[string]interface{}, expiration int) error
 }
 
 type loginUserBiz struct {
 	userStorage         GetUserStorage
 	storeSessionStorage StoreSessionStorage
+	jwtHandler          JWTHandler
 }
 
-func NewLoginUserBiz(userStorage GetUserStorage, storeSessionStorage StoreSessionStorage) *loginUserBiz {
+func NewLoginUserBiz(userStorage GetUserStorage, storeSessionStorage StoreSessionStorage, jwtHandler JWTHandler) *loginUserBiz {
 	return &loginUserBiz{
 		userStorage:         userStorage,
 		storeSessionStorage: storeSessionStorage,
+		jwtHandler:          jwtHandler,
 	}
 }
 
-func (biz *loginUserBiz) AuthenticateUser(ctx context.Context, data *model.UserLogin, authResponse *model.AuthResponse) error {
+func (biz *loginUserBiz) Login(ctx context.Context, data *model.UserLogin) (*model.AuthResponse, error) {
 
 	email := strings.TrimSpace(data.Email)
 	password := data.Password
 
 	if email == "" || password == "" {
-		return model.ErrEmailOrPassMissing
+		return nil, model.ErrEmailOrPassMissing
 	}
 
 	// Find User by email
 	user, err := biz.userStorage.GetUser(ctx, map[string]interface{}{"email": email})
 	if err != nil {
-		return model.ErrLoginFailure
+		return nil, model.ErrLoginFailure
 	}
 
 	// compare password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return model.ErrLoginFailure
+		return nil, model.ErrLoginFailure
 	}
 
 	// Genarate Tokens
-	handleTokenBiz := HandleTokenBiz{}
-	accessToken, err := handleTokenBiz.GenerateAccessToken(user)
+	accessToken, expAcTokenSecs, err := biz.jwtHandler.GenerateAccessToken(user.Email)
 
 	if err != nil {
-		return model.ErrGenerateToken
+		return nil, err
 	}
 
-	authResponse.AccessToken = accessToken
-
-	refreshToken, err := handleTokenBiz.GenerateRefreshToken(user)
-
-	authResponse.RefreshToken = refreshToken
+	refreshToken, expReTokenSecs, err := biz.jwtHandler.GenerateRefreshToken(user.Email)
 
 	if err != nil {
-		return model.ErrGenerateToken
+		return nil, err
 	}
 
 	// Use Redis to store session
@@ -68,14 +65,23 @@ func (biz *loginUserBiz) AuthenticateUser(ctx context.Context, data *model.UserL
 		ctx,
 		user.Email,
 		map[string]interface{}{
-			model.RefreshToken: refreshToken,
+			common.RefreshToken: refreshToken,
 		},
-		time.Until(model.RefreshTokenMaxAge),
+		expReTokenSecs,
 	)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &model.AuthResponse{
+		AccessToken: model.Token{
+			Token:     accessToken,
+			ExpiredIn: expAcTokenSecs,
+		},
+		RefreshToken: model.Token{
+			Token:     refreshToken,
+			ExpiredIn: expReTokenSecs,
+		},
+	}, nil
 }

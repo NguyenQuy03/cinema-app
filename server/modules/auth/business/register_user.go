@@ -2,11 +2,9 @@ package business
 
 import (
 	"context"
-	"strings"
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
-	"github.com/NguyenQuy03/cinema-app/server/utils/mailUtil"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,19 +24,8 @@ func NewRegisterUserBiz(storage RegisterUserStorage) *registerUserBiz {
 }
 
 func (biz *registerUserBiz) RegisterUser(ctx context.Context, data *model.UserRegister) error {
-	email := strings.TrimSpace(data.Email)
-	password := data.Password
-
-	if !mailUtil.IsValidEmail(email) {
-		return model.ErrEmailInvalid
-	}
-
-	if len(password) < 6 {
-		return model.ErrShortPass
-	}
-
 	// Check user has already exist in DB or not
-	_, err := biz.storage.GetUser(ctx, map[string]interface{}{"email": email})
+	_, err := biz.storage.GetUser(ctx, map[string]interface{}{"email": data.Email})
 	if err == nil {
 		return model.ErrUserExisted
 	}

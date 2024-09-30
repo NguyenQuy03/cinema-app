@@ -13,15 +13,15 @@ type UpdateGenreStorage interface {
 	GetGenre(ctx context.Context, conds map[string]interface{}) (*model.Genre, error)
 }
 
-type UpdateGenreBiz struct {
+type updateGenreBiz struct {
 	storage UpdateGenreStorage
 }
 
-func NewUpdateGenreBiz(storage UpdateGenreStorage) *UpdateGenreBiz {
-	return &UpdateGenreBiz{storage}
+func NewUpdateGenreBiz(storage UpdateGenreStorage) *updateGenreBiz {
+	return &updateGenreBiz{storage}
 }
 
-func (biz *UpdateGenreBiz) UpdateGenre(ctx context.Context, id int, newData *model.GenreUpdate) error {
+func (biz *updateGenreBiz) UpdateGenre(ctx context.Context, id int, newData *model.GenreUpdate) error {
 	oldData, err := biz.storage.GetGenre(ctx, map[string]interface{}{
 		"genre_id": id,
 	})

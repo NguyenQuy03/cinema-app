@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (s *redisStorage) StoreUserSession(ctx context.Context, key string, infors map[string]interface{}, expiration time.Duration) error {
+func (s *redisStorage) StoreUserSession(ctx context.Context, key string, infors map[string]interface{}, expiration int) error {
 	rKey := fmt.Sprintf("user_sessions:%s", key)
 
 	pipe := s.client.Pipeline()
@@ -24,7 +24,7 @@ func (s *redisStorage) StoreUserSession(ctx context.Context, key string, infors 
 	}
 
 	if expiration > 0 {
-		pipe.Expire(ctx, rKey, expiration)
+		pipe.Expire(ctx, rKey, time.Duration(expiration)*time.Second)
 	}
 
 	_, err := pipe.Exec(ctx)

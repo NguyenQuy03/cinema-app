@@ -5,16 +5,16 @@ import (
 	"strconv"
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
-	"github.com/NguyenQuy03/cinema-app/server/modules/genre/business"
-	"github.com/NguyenQuy03/cinema-app/server/modules/genre/model"
-	"github.com/NguyenQuy03/cinema-app/server/modules/genre/storage/mssql"
+	"github.com/NguyenQuy03/cinema-app/server/modules/director/business"
+	"github.com/NguyenQuy03/cinema-app/server/modules/director/model"
+	"github.com/NguyenQuy03/cinema-app/server/modules/director/storage/mssql"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func UpdateGenre(db *gorm.DB) func(*gin.Context) {
 	return func(ctx *gin.Context) {
-		var data model.GenreUpdate
+		var data model.DirectorUpdate
 		id, err := strconv.Atoi(ctx.Param("id"))
 
 		if err != nil {
@@ -28,9 +28,9 @@ func UpdateGenre(db *gorm.DB) func(*gin.Context) {
 		}
 
 		storage := mssql.NewSQLStorage(db)
-		business := business.NewUpdateGenreBiz(storage)
+		business := business.NewUpdateDirectorBiz(storage)
 
-		if err := business.UpdateGenre(ctx, id, &data); err != nil {
+		if err := business.UpdateDirector(ctx, id, &data); err != nil {
 			ctx.JSON(http.StatusBadRequest, err)
 			return
 		}

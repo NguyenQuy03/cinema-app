@@ -21,6 +21,10 @@ func main() {
 		log.Fatalf("%v", err)
 	}
 
+	if err != nil {
+		log.Fatal("failed to migrate database:", err)
+	}
+
 	opt, err := db.InitRedisDB()
 	if err != nil {
 		panic(err)
