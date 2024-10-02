@@ -19,7 +19,7 @@ func AuthenticateUser(db *gorm.DB, redisDB *redis.Client) func(*gin.Context) {
 		var user model.UserLogin
 		var authResponse *model.AuthResponse
 
-		jwtHandler := new(common.JWTHandler)
+		jwtProvider := new(common.JWTProvider)
 
 		if err := ctx.ShouldBind(&user); err != nil {
 			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))
@@ -30,7 +30,7 @@ func AuthenticateUser(db *gorm.DB, redisDB *redis.Client) func(*gin.Context) {
 		sqlStorage := mssql.NewSQLStorage(db)
 		sessionStorage := redisStorage.NewRedisStorage(redisDB)
 
-		business := business.NewLoginUserBiz(sqlStorage, sessionStorage, jwtHandler)
+		business := business.NewLoginUserBiz(sqlStorage, sessionStorage, jwtProvider)
 
 		authResponse, err := business.Login(ctx.Request.Context(), &user)
 

@@ -15,13 +15,15 @@ func CreateGenre(db *gorm.DB) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		var data model.GenreCreation
 
+		slugProvider := new(common.SlugProvider)
+
 		if err := ctx.ShouldBind(&data); err != nil {
 			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))
 			return
 		}
 
 		storage := mssql.NewSQLStorage(db)
-		business := business.NewCreateGenreBiz(storage)
+		business := business.NewCreateGenreBiz(storage, slugProvider)
 
 		if err := business.CreateGenre(ctx, &data); err != nil {
 			ctx.JSON(http.StatusBadRequest, common.ErrInvalidReq(err))

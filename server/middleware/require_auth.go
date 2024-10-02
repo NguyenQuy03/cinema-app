@@ -17,7 +17,7 @@ func RequireAuth(db *gorm.DB, redisDB *redis.Client) func(*gin.Context) {
 	return func(c *gin.Context) {
 		bearerToken := c.GetHeader("Authorization")
 
-		jwtHandler := new(common.JWTHandler)
+		jwtProvider := new(common.JWTProvider)
 
 		if bearerToken == "" || !strings.HasPrefix(bearerToken, "Bearer ") {
 			err := common.NewUnauthorized(errors.New("missing or invalid token"), "Authorization header is missing or invalid", "TOKEN_MISSING_OR_INVALID_ERR")
@@ -27,7 +27,7 @@ func RequireAuth(db *gorm.DB, redisDB *redis.Client) func(*gin.Context) {
 
 		tokenString := strings.Split(bearerToken, " ")[1]
 
-		token, err := jwtHandler.ValidateToken(tokenString)
+		token, err := jwtProvider.ValidateToken(tokenString)
 
 		if err != nil || token == nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, err)
@@ -37,7 +37,7 @@ func RequireAuth(db *gorm.DB, redisDB *redis.Client) func(*gin.Context) {
 		// Store current use context
 		if _, exists := c.Get("user"); !exists {
 			// Extract email from token
-			claims, err := jwtHandler.ParseToken(tokenString)
+			claims, err := jwtProvider.ParseToken(tokenString)
 
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, err)

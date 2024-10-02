@@ -18,12 +18,12 @@ func RefreshToken(db *gorm.DB, redisDB *redis.Client) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		var authResponse *model.AuthResponse
 
-		jwtHandler := new(common.JWTHandler)
+		jwtProvider := new(common.JWTProvider)
 
 		sqlStorage := mssql.NewSQLStorage(db)
 		sessionStorage := redisStorage.NewRedisStorage(redisDB)
 
-		business := business.NewRefreshTokenBiz(sqlStorage, sessionStorage, jwtHandler)
+		business := business.NewRefreshTokenBiz(sqlStorage, sessionStorage, jwtProvider)
 
 		// Get refresh_token from cookie
 		refreshToken, err := cookieUtil.GetCookie(ctx.Request, common.RefreshToken)

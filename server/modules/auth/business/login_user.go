@@ -16,14 +16,14 @@ type StoreSessionStorage interface {
 type loginUserBiz struct {
 	userStorage         GetUserStorage
 	storeSessionStorage StoreSessionStorage
-	jwtHandler          JWTHandler
+	jwtProvider         JWTProvider
 }
 
-func NewLoginUserBiz(userStorage GetUserStorage, storeSessionStorage StoreSessionStorage, jwtHandler JWTHandler) *loginUserBiz {
+func NewLoginUserBiz(userStorage GetUserStorage, storeSessionStorage StoreSessionStorage, jwtProvider JWTProvider) *loginUserBiz {
 	return &loginUserBiz{
 		userStorage:         userStorage,
 		storeSessionStorage: storeSessionStorage,
-		jwtHandler:          jwtHandler,
+		jwtProvider:         jwtProvider,
 	}
 }
 
@@ -48,13 +48,13 @@ func (biz *loginUserBiz) Login(ctx context.Context, data *model.UserLogin) (*mod
 	}
 
 	// Genarate Tokens
-	accessToken, expAcTokenSecs, err := biz.jwtHandler.GenerateAccessToken(user.Email)
+	accessToken, expAcTokenSecs, err := biz.jwtProvider.GenerateAccessToken(user.Email)
 
 	if err != nil {
 		return nil, err
 	}
 
-	refreshToken, expReTokenSecs, err := biz.jwtHandler.GenerateRefreshToken(user.Email)
+	refreshToken, expReTokenSecs, err := biz.jwtProvider.GenerateRefreshToken(user.Email)
 
 	if err != nil {
 		return nil, err

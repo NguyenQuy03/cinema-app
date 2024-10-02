@@ -21,7 +21,7 @@ func NewUpdateMovieBiz(storage UpdateMovieStorage) *updateMovieBiz {
 }
 
 func (biz *updateMovieBiz) UpdateMovieById(ctx context.Context, id int, newData *model.MovieUpdate) error {
-	oldData, err := biz.storage.GetMovie(ctx, map[string]interface{}{"id": id})
+	oldData, err := biz.storage.GetMovie(ctx, map[string]interface{}{"movie_id": id})
 	if err != nil {
 		if err == common.ErrRecordNotFound {
 			return common.ErrCannotGetEntity(err, model.MovieEntityName)
@@ -34,7 +34,7 @@ func (biz *updateMovieBiz) UpdateMovieById(ctx context.Context, id int, newData 
 		return model.ErrMovieDeleted
 	}
 
-	if err := biz.storage.UpdateMovie(ctx, map[string]interface{}{"id": id}, newData); err != nil {
+	if err := biz.storage.UpdateMovie(ctx, map[string]interface{}{"movie_id": id}, newData); err != nil {
 		return common.ErrCannotUpdateEntity(err, model.MovieEntityName)
 	}
 

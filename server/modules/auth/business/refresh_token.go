@@ -14,7 +14,7 @@ type UpdateSessionStorage interface {
 	StoreUserSession(ctx context.Context, key string, infors map[string]interface{}, expiration int) error
 }
 
-type JWTHandler interface {
+type JWTProvider interface {
 	ValidateToken(tokenString string) (*jwt.Token, error)
 	GenerateAccessToken(sub string) (string, int, error)
 	GenerateRefreshToken(sub string) (string, int, error)
@@ -25,27 +25,27 @@ type JWTHandler interface {
 type refreshTokenBiz struct {
 	getUserStorage       GetUserStorage
 	updateSessionStorage UpdateSessionStorage
-	jwtHandler           JWTHandler
+	jwtProvider          JWTProvider
 }
 
-func NewRefreshTokenBiz(getUserStorage GetUserStorage, updateSessionStorage UpdateSessionStorage, jwtHandler JWTHandler) *refreshTokenBiz {
+func NewRefreshTokenBiz(getUserStorage GetUserStorage, updateSessionStorage UpdateSessionStorage, jwtProvider JWTProvider) *refreshTokenBiz {
 	return &refreshTokenBiz{
 		getUserStorage:       getUserStorage,
 		updateSessionStorage: updateSessionStorage,
-		jwtHandler:           jwtHandler,
+		jwtProvider:          jwtProvider,
 	}
 }
 
 func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, refreshToken string) (*model.AuthResponse, error) {
 	// Validate request token
-	token, err := biz.jwtHandler.ValidateToken(refreshToken)
+	token, err := biz.jwtProvider.ValidateToken(refreshToken)
 
 	if err != nil || token == nil {
 		return nil, err
 	}
 
 	// Extract email from token
-	claims, err := biz.jwtHandler.ParseToken(refreshToken)
+	claims, err := biz.jwtProvider.ParseToken(refreshToken)
 	email := claims.Subject
 
 	if err != nil {
@@ -62,7 +62,7 @@ func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, r
 	prevRefreshToken := userSession[common.RefreshToken]
 
 	// Compare Tokens
-	_, err = biz.jwtHandler.CompareToken(prevRefreshToken, refreshToken)
+	_, err = biz.jwtProvider.CompareToken(prevRefreshToken, refreshToken)
 
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, r
 		return nil, err
 	}
 
-	accessToken, expAcTokenSecs, err := biz.jwtHandler.GenerateAccessToken(user.Email)
+	accessToken, expAcTokenSecs, err := biz.jwtProvider.GenerateAccessToken(user.Email)
 
 	if err != nil {
 		return nil, err

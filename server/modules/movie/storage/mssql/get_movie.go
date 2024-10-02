@@ -11,7 +11,6 @@ import (
 func (s *sqlStorage) GetMovie(ctx context.Context, conds map[string]interface{}) (*model.Movie, error) {
 	var data model.Movie
 
-	// Preload genres while fetching the movie
 	if err := s.db.Preload("Genres").Preload("Director").Where(conds).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrRecordNotFound

@@ -54,17 +54,17 @@ var (
 	)
 )
 
-type JWTHandler struct{}
+type JWTProvider struct{}
 
-func (handler *JWTHandler) GenerateAccessToken(sub string) (string, int, error) {
-	return handler.issueToken(sub, expireAccessTokenInSeconds)
+func (provider *JWTProvider) GenerateAccessToken(sub string) (string, int, error) {
+	return provider.issueToken(sub, expireAccessTokenInSeconds)
 }
 
-func (handler *JWTHandler) GenerateRefreshToken(sub string) (string, int, error) {
-	return handler.issueToken(sub, expireRefreshTokenInSeconds)
+func (provider *JWTProvider) GenerateRefreshToken(sub string) (string, int, error) {
+	return provider.issueToken(sub, expireRefreshTokenInSeconds)
 }
 
-func (handler *JWTHandler) issueToken(sub string, expTime int) (string, int, error) {
+func (provider *JWTProvider) issueToken(sub string, expTime int) (string, int, error) {
 	claims := jwt.RegisteredClaims{
 		Subject:   sub,
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expTime) * time.Second)),
@@ -80,7 +80,7 @@ func (handler *JWTHandler) issueToken(sub string, expTime int) (string, int, err
 	return tokenString, expTime, nil
 }
 
-func (handler *JWTHandler) ValidateToken(tokenString string) (*jwt.Token, error) {
+func (provider *JWTProvider) ValidateToken(tokenString string) (*jwt.Token, error) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Check algorithm used for generating token
@@ -112,7 +112,7 @@ func (handler *JWTHandler) ValidateToken(tokenString string) (*jwt.Token, error)
 	return token, nil
 }
 
-func (handler *JWTHandler) ParseToken(tokenString string) (claims *jwt.RegisteredClaims, err error) {
+func (provider *JWTProvider) ParseToken(tokenString string) (claims *jwt.RegisteredClaims, err error) {
 	var rc jwt.RegisteredClaims
 
 	token, err := jwt.ParseWithClaims(tokenString, &rc, func(token *jwt.Token) (interface{}, error) {
@@ -130,7 +130,7 @@ func (handler *JWTHandler) ParseToken(tokenString string) (claims *jwt.Registere
 	return &rc, nil
 }
 
-func (handler *JWTHandler) CompareToken(token1, token2 string) (bool, error) {
+func (provider *JWTProvider) CompareToken(token1, token2 string) (bool, error) {
 	// Handle Expired Token
 	if token1 == "" || token2 == "" {
 		return false, ErrRequireLogin

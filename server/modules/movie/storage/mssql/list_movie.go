@@ -22,7 +22,7 @@ func (s *sqlStorage) ListMovie(ctx context.Context, filter *model.Filter, p *com
 		return nil, common.ErrDB(err)
 	}
 
-	if err := db.Order("id desc").Offset((p.Page - 1) * p.Limit).Limit(p.Limit).Find(&result).Error; err != nil {
+	if err := db.Order("movie_id desc").Offset((p.Page - 1) * p.Limit).Limit(p.Limit).Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
 
