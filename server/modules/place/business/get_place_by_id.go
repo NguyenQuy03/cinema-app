@@ -21,7 +21,7 @@ func NewGetPlaceBiz(storage GetPlaceStorage) *getPlaceBiz {
 
 func (biz *getPlaceBiz) GetPlaceById(ctx context.Context, id int) (*model.Place, error) {
 	result, err := biz.storage.GetPlace(ctx, map[string]interface{}{
-		"place_id": id,
+		"id": id,
 	})
 
 	if err != nil {

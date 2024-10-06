@@ -16,14 +16,14 @@ var (
 )
 
 type Director struct {
-	DirectorId   int    `json:"director_id" gorm:"director_id;primaryKey"`
+	common.SQLModel
 	DirectorName string `json:"director_name" gorm:"director_name"`
 }
 
 func (Director) TableName() string { return "director" }
 
 type DirectorCreation struct {
-	DirectorId   int    `gorm:"director_id;primaryKey"`
+	Id           int    `gorm:"id;primaryKey"`
 	DirectorName string `json:"director_name" gorm:"director_name"`
 }
 

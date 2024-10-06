@@ -1,8 +1,14 @@
 package common
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type SQLModel struct {
-	CreatedAt *time.Time `json:"created_at" gorm:"column:created_at"`
-	UpdatedAt *time.Time `json:"updated_at" gorm:"column:updated_at"`
+	Id        int            `json:"id" gorm:"column:id;primaryKey"`
+	CreatedAt *time.Time     `json:"created_at" gorm:"column:created_at;autoCreateTime"`
+	UpdatedAt *time.Time     `json:"updated_at" gorm:"column:updated_at;autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }

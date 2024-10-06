@@ -10,7 +10,6 @@ const (
 
 type Experience struct {
 	common.SQLModel
-	ExpId       int    `json:"exp_id" gorm:"column:exp_id;primaryKey"`
 	ExpFeature  string `json:"exp_feature" gorm:"column:exp_feature"`
 	Description string `json:"description" gorm:"column:description"`
 }
@@ -18,7 +17,7 @@ type Experience struct {
 func (Experience) TableName() string { return "experience" }
 
 type ExperienceCreation struct {
-	ExpId       int    `gorm:"column:exp_id;primaryKey"`
+	Id          int    `gorm:"column:id;primaryKey"`
 	ExpFeature  string `json:"exp_feature" gorm:"column:exp_feature"`
 	Description string `json:"description" gorm:"column:description"`
 }

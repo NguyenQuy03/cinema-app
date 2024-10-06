@@ -23,7 +23,7 @@ func NewUpdatePlaceBiz(storage UpdatePlaceStorage) *updatePlaceBiz {
 
 func (biz *updatePlaceBiz) UpdatePlace(ctx context.Context, id int, newData *model.PlaceUpdate) error {
 	oldData, err := biz.storage.GetPlace(ctx, map[string]interface{}{
-		"place_id": id,
+		"id": id,
 	})
 
 	if err != nil {
@@ -34,12 +34,12 @@ func (biz *updatePlaceBiz) UpdatePlace(ctx context.Context, id int, newData *mod
 		return common.ErrCannotUpdateEntity(err, model.PlaceEntityName)
 	}
 
-	if oldData.PlaceId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("place not found"), model.PlaceEntityName)
 	}
 
 	if err := biz.storage.UpdatePlace(ctx, map[string]interface{}{
-		"place_id": id,
+		"id": id,
 	}, newData); err != nil {
 		return common.ErrCannotUpdateEntity(err, model.PlaceEntityName)
 	}

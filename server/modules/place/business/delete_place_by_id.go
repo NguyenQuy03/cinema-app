@@ -24,7 +24,7 @@ func NewDeletePlaceBiz(storage DeletePlaceStorage) *deletePlaceBiz {
 }
 
 func (biz *deletePlaceBiz) DeletePlaceById(ctx context.Context, id int) error {
-	oldData, err := biz.storage.GetPlace(ctx, map[string]interface{}{"place_id": id})
+	oldData, err := biz.storage.GetPlace(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
 		if err == common.ErrRecordNotFound {
@@ -34,11 +34,11 @@ func (biz *deletePlaceBiz) DeletePlaceById(ctx context.Context, id int) error {
 		return common.ErrCannotDeleteEntity(err, model.PlaceEntityName)
 	}
 
-	if oldData.PlaceId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("place not found"), model.PlaceEntityName)
 	}
 
-	if err := biz.storage.DeletePlace(ctx, map[string]interface{}{"place_id": id}); err != nil {
+	if err := biz.storage.DeletePlace(ctx, map[string]interface{}{"id": id}); err != nil {
 		return common.ErrCannotDeleteEntity(err, model.PlaceEntityName)
 	}
 

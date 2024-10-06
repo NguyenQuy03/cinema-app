@@ -21,7 +21,7 @@ func NewGetCinemaBiz(storage GetCinemaStorage) *getCinemaBiz {
 
 func (biz *getCinemaBiz) GetCinemaById(ctx context.Context, id int) (*model.Cinema, error) {
 	result, err := biz.storage.GetCinema(ctx, map[string]interface{}{
-		"cinema_id": id,
+		"id": id,
 	})
 
 	if err != nil {

@@ -32,7 +32,6 @@ var (
 
 type User struct {
 	common.SQLModel
-	UserId      int    `json:"user_id" gorm:"column:user_id"`
 	Email       string `json:"email" gorm:"column:email"`
 	Password    string `json:"password" gorm:"column:password"`
 	FullName    string `json:"full_name" gorm:"column:full_name"`

@@ -32,6 +32,12 @@ func SetupV1Router(router *gin.Engine, db *gorm.DB, redisDB *redis.Client) *gin.
 
 		// Cinema
 		setupCinemaRoutes(v1, db, redisDB)
+
+		// Theater
+		setupTheaterRoutes(v1, db, redisDB)
+
+		// Showing
+		setupShowingRoutes(v1, db, redisDB)
 	}
 
 	return router

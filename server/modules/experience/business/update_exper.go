@@ -23,7 +23,7 @@ func NewUpdateExperienceBiz(storage UpdateExperienceStorage) *updateExperienceBi
 
 func (biz *updateExperienceBiz) UpdateExperience(ctx context.Context, id int, newData *model.ExperienceUpdate) error {
 	oldData, err := biz.storage.GetExperience(ctx, map[string]interface{}{
-		"exp_id": id,
+		"id": id,
 	})
 
 	if err != nil {
@@ -34,12 +34,12 @@ func (biz *updateExperienceBiz) UpdateExperience(ctx context.Context, id int, ne
 		return common.ErrCannotUpdateEntity(err, model.ExperienceEntityName)
 	}
 
-	if oldData.ExpId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("genre not found"), model.ExperienceEntityName)
 	}
 
 	if err := biz.storage.UpdateExperience(ctx, map[string]interface{}{
-		"exp_id": id,
+		"id": id,
 	}, newData); err != nil {
 		return common.ErrCannotUpdateEntity(err, model.ExperienceEntityName)
 	}

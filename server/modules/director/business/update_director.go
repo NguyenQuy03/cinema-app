@@ -23,7 +23,7 @@ func NewUpdateDirectorBiz(storage UpdateDirectorStorage) *updateDirectorBiz {
 
 func (biz *updateDirectorBiz) UpdateDirector(ctx context.Context, id int, newData *model.DirectorUpdate) error {
 	oldData, err := biz.storage.GetDirector(ctx, map[string]interface{}{
-		"director_id": id,
+		"id": id,
 	})
 
 	if err != nil {
@@ -34,12 +34,12 @@ func (biz *updateDirectorBiz) UpdateDirector(ctx context.Context, id int, newDat
 		return common.ErrCannotUpdateEntity(err, model.DirectorEntityName)
 	}
 
-	if oldData.DirectorId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("genre not found"), model.DirectorEntityName)
 	}
 
 	if err := biz.storage.UpdateDirector(ctx, map[string]interface{}{
-		"director_id": id,
+		"id": id,
 	}, newData); err != nil {
 		return common.ErrCannotUpdateEntity(err, model.DirectorEntityName)
 	}

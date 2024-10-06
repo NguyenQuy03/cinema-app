@@ -23,7 +23,7 @@ func NewUpdateGenreBiz(storage UpdateGenreStorage) *updateGenreBiz {
 
 func (biz *updateGenreBiz) UpdateGenre(ctx context.Context, id int, newData *model.GenreUpdate) error {
 	oldData, err := biz.storage.GetGenre(ctx, map[string]interface{}{
-		"genre_id": id,
+		"id": id,
 	})
 
 	if err != nil {
@@ -34,12 +34,12 @@ func (biz *updateGenreBiz) UpdateGenre(ctx context.Context, id int, newData *mod
 		return common.ErrCannotUpdateEntity(err, model.GenreEntityName)
 	}
 
-	if oldData.GenreId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("genre not found"), model.GenreEntityName)
 	}
 
 	if err := biz.storage.UpdateGenre(ctx, map[string]interface{}{
-		"genre_id": id,
+		"id": id,
 	}, newData); err != nil {
 		return common.ErrCannotUpdateEntity(err, model.GenreEntityName)
 	}

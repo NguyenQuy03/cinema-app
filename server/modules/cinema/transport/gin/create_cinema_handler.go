@@ -30,6 +30,6 @@ func CreateCinema(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(data.CinemaId))
+		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(data.Id))
 	}
 }

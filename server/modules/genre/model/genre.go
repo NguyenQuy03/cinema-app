@@ -16,7 +16,7 @@ var (
 )
 
 type Genre struct {
-	GenreId   int    `json:"genre_id" gorm:"genre_id;primaryKey"`
+	common.SQLModel
 	GenreSlug string `json:"genre_slug" gorm:"genre_slug"`
 	GenreName string `json:"genre_name" gorm:"genre_name"`
 }
@@ -24,7 +24,7 @@ type Genre struct {
 func (Genre) TableName() string { return "genre" }
 
 type GenreCreation struct {
-	GenreId   int    `gorm:"genre_id;primaryKey"`
+	Id        int    `gorm:"id;primaryKey"`
 	GenreSlug string `gorm:"genre_slug"`
 	GenreName string `json:"genre_name" gorm:"genre_name"`
 }

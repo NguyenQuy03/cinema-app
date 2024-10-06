@@ -28,6 +28,6 @@ func CreateExperience(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(data.ExpId))
+		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(data.Id))
 	}
 }

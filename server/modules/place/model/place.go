@@ -10,7 +10,6 @@ const (
 
 type Place struct {
 	common.SQLModel
-	PlaceId   int    `json:"place_id" gorm:"column:place_id;primaryKey"`
 	PlaceName string `json:"place_name" gorm:"column:place_name"`
 	PlaceSlug string `json:"place_slug" gorm:"column:place_slug"`
 }
@@ -18,7 +17,7 @@ type Place struct {
 func (Place) TableName() string { return "place" }
 
 type PlaceCreation struct {
-	PlaceId   int    `gorm:"column:place_id;primaryKey"`
+	Id        int    `gorm:"column:id;primaryKey"`
 	PlaceName string `json:"place_name" gorm:"column:place_name"`
 	PlaceSlug string `gorm:"column:place_slug"`
 }

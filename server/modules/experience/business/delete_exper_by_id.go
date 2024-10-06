@@ -24,7 +24,7 @@ func NewDeleteExperienceBiz(storage DeleteExperienceStorage) *deleteExperienceBi
 }
 
 func (biz *deleteExperienceBiz) DeleteExperienceById(ctx context.Context, id int) error {
-	oldData, err := biz.storage.GetExperience(ctx, map[string]interface{}{"exp_id": id})
+	oldData, err := biz.storage.GetExperience(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
 		if err == common.ErrRecordNotFound {
@@ -34,11 +34,11 @@ func (biz *deleteExperienceBiz) DeleteExperienceById(ctx context.Context, id int
 		return common.ErrCannotDeleteEntity(err, model.ExperienceEntityName)
 	}
 
-	if oldData.ExpId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("experience not found"), model.ExperienceEntityName)
 	}
 
-	if err := biz.storage.DeleteExperience(ctx, map[string]interface{}{"exp_id": id}); err != nil {
+	if err := biz.storage.DeleteExperience(ctx, map[string]interface{}{"id": id}); err != nil {
 		return common.ErrCannotDeleteEntity(err, model.ExperienceEntityName)
 	}
 

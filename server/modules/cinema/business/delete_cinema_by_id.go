@@ -24,7 +24,7 @@ func NewDeleteCinemaBiz(storage DeleteCinemaStorage) *deleteCinemaBiz {
 }
 
 func (biz *deleteCinemaBiz) DeleteCinemaById(ctx context.Context, id int) error {
-	oldData, err := biz.storage.GetCinema(ctx, map[string]interface{}{"cinema_id": id})
+	oldData, err := biz.storage.GetCinema(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
 		if err == common.ErrRecordNotFound {
@@ -34,11 +34,11 @@ func (biz *deleteCinemaBiz) DeleteCinemaById(ctx context.Context, id int) error 
 		return common.ErrCannotDeleteEntity(err, model.CinemaEntityName)
 	}
 
-	if oldData.CinemaId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("cinema not found"), model.CinemaEntityName)
 	}
 
-	if err := biz.storage.DeleteCinema(ctx, map[string]interface{}{"cinema_id": id}); err != nil {
+	if err := biz.storage.DeleteCinema(ctx, map[string]interface{}{"id": id}); err != nil {
 		return common.ErrCannotDeleteEntity(err, model.CinemaEntityName)
 	}
 

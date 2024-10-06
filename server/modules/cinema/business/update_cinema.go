@@ -23,7 +23,7 @@ func NewUpdateCinemaBiz(storage UpdateCinemaStorage) *updateCinemaBiz {
 
 func (biz *updateCinemaBiz) UpdateCinema(ctx context.Context, id int, newData *model.CinemaUpdate) error {
 	oldData, err := biz.storage.GetCinema(ctx, map[string]interface{}{
-		"cinema_id": id,
+		"id": id,
 	})
 
 	if err != nil {
@@ -34,12 +34,12 @@ func (biz *updateCinemaBiz) UpdateCinema(ctx context.Context, id int, newData *m
 		return common.ErrCannotUpdateEntity(err, model.CinemaEntityName)
 	}
 
-	if oldData.CinemaId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("cinema not found"), model.CinemaEntityName)
 	}
 
 	if err := biz.storage.UpdateCinema(ctx, map[string]interface{}{
-		"cinema_id": id,
+		"id": id,
 	}, newData); err != nil {
 		return common.ErrCannotUpdateEntity(err, model.CinemaEntityName)
 	}

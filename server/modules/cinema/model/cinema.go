@@ -11,7 +11,6 @@ const (
 
 type Cinema struct {
 	common.SQLModel
-	CinemaId   int         `json:"cinema_id" gorm:"column:cinema_id;primaryKey"`
 	Place      model.Place `json:"place" gorm:"column:place;foreignKey:PlaceId"`
 	CinemaName string      `json:"cinema_name" gorm:"column:cinema_name"`
 	CinemaSlug string      `json:"cinema_slug" gorm:"column:cinema_slug"`
@@ -20,7 +19,7 @@ type Cinema struct {
 func (Cinema) TableName() string { return "cinema" }
 
 type CinemaCreation struct {
-	CinemaId   int         `gorm:"column:cinema_id;primaryKey"`
+	Id         int         `gorm:"column:id;primaryKey"`
 	Place      model.Place `json:"place" gorm:"column:place;foreignKey:PlaceId"`
 	CinemaName string      `json:"cinema_name" gorm:"column:cinema_name"`
 	CinemaSlug string      `json:"-" gorm:"column:cinema_slug"`

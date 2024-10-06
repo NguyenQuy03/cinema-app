@@ -21,7 +21,7 @@ func NewGetExperienceBiz(storage GetExperienceStorage) *getExperienceBiz {
 
 func (biz *getExperienceBiz) GetExperienceById(ctx context.Context, id int) (*model.Experience, error) {
 	result, err := biz.storage.GetExperience(ctx, map[string]interface{}{
-		"exp_id": id,
+		"id": id,
 	})
 
 	if err != nil {

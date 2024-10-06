@@ -23,7 +23,7 @@ func NewDeleteDirectorBiz(storage DeleteDirectorStorage) *deleteDirectorBiz {
 }
 
 func (biz *deleteDirectorBiz) DeleteDirectorById(ctx context.Context, id int) error {
-	oldData, err := biz.storage.GetDirector(ctx, map[string]interface{}{"director_id": id})
+	oldData, err := biz.storage.GetDirector(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
 		if err == common.ErrRecordNotFound {
@@ -33,11 +33,11 @@ func (biz *deleteDirectorBiz) DeleteDirectorById(ctx context.Context, id int) er
 		return common.ErrCannotDeleteEntity(err, model.DirectorEntityName)
 	}
 
-	if oldData.DirectorId == 0 {
+	if oldData.Id == 0 {
 		return model.ErrDirectorNotFound
 	}
 
-	if err := biz.storage.DeleteDirector(ctx, map[string]interface{}{"director_id": id}); err != nil {
+	if err := biz.storage.DeleteDirector(ctx, map[string]interface{}{"id": id}); err != nil {
 		return common.ErrCannotDeleteEntity(err, model.DirectorEntityName)
 	}
 

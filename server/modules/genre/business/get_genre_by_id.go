@@ -21,7 +21,7 @@ func NewGetGenreBiz(storage GetGenreStorage) *getGenreBiz {
 
 func (biz *getGenreBiz) GetGenreById(ctx context.Context, id int) (*model.Genre, error) {
 	result, err := biz.storage.GetGenre(ctx, map[string]interface{}{
-		"genre_id": id,
+		"id": id,
 	})
 
 	if err != nil {

@@ -24,7 +24,7 @@ func NewDeleteGenreBiz(storage DeleteGenreStorage) *deleteGenreBiz {
 }
 
 func (biz *deleteGenreBiz) DeleteGenreById(ctx context.Context, id int) error {
-	oldData, err := biz.storage.GetGenre(ctx, map[string]interface{}{"genre_id": id})
+	oldData, err := biz.storage.GetGenre(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
 		if err == common.ErrRecordNotFound {
@@ -34,11 +34,11 @@ func (biz *deleteGenreBiz) DeleteGenreById(ctx context.Context, id int) error {
 		return common.ErrCannotDeleteEntity(err, model.GenreEntityName)
 	}
 
-	if oldData.GenreId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("genre not found"), model.GenreEntityName)
 	}
 
-	if err := biz.storage.DeleteGenre(ctx, map[string]interface{}{"genre_id": id}); err != nil {
+	if err := biz.storage.DeleteGenre(ctx, map[string]interface{}{"id": id}); err != nil {
 		return common.ErrCannotDeleteEntity(err, model.GenreEntityName)
 	}
 

@@ -12,7 +12,6 @@ const (
 
 type Movie struct {
 	common.SQLModel
-	MovieId     int                    `json:"movie_id" gorm:"column:movie_id;primaryKey"`
 	Director    directorModel.Director `json:"director" gorm:"column:director;foreignKey:DirectorId"`
 	Genres      []genreModel.Genre     `json:"genres" gorm:"many2many:movie_genre;foreignKey:MovieId;joinForeignKey:MovieId;References:GenreId;joinReferences:GenreId"`
 	Title       string                 `json:"title" gorm:"column:title"`
@@ -29,7 +28,7 @@ type Movie struct {
 func (Movie) TableName() string { return "movie" }
 
 type MovieCreation struct {
-	MovieId     int          `json:"-" gorm:"column:movie_id"`
+	Id          int          `json:"-" gorm:"column:id"`
 	Title       string       `json:"title" gorm:"column:title"`
 	Description string       `json:"description" gorm:"column:description"`
 	Duration    int          `json:"duration" gorm:"column:duration"`

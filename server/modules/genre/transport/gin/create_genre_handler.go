@@ -30,6 +30,6 @@ func CreateGenre(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(data.GenreId))
+		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(data.Id))
 	}
 }
