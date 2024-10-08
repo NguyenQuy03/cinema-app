@@ -23,7 +23,7 @@ func NewUpdateAccessBiz(storage UpdateAccessStorage) *updateAccessBiz {
 
 func (biz *updateAccessBiz) UpdateAccess(ctx context.Context, id int, newData *model.AccessUpdate) error {
 	oldData, err := biz.storage.GetAccess(ctx, map[string]interface{}{
-		"acc_id": id,
+		"id": id,
 	})
 
 	if err != nil {
@@ -34,12 +34,12 @@ func (biz *updateAccessBiz) UpdateAccess(ctx context.Context, id int, newData *m
 		return common.ErrCannotUpdateEntity(err, model.AccessEntityName)
 	}
 
-	if oldData.AccId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("accessibility not found"), model.AccessEntityName)
 	}
 
 	if err := biz.storage.UpdateAccess(ctx, map[string]interface{}{
-		"acc_id": id,
+		"id": id,
 	}, newData); err != nil {
 		return common.ErrCannotUpdateEntity(err, model.AccessEntityName)
 	}

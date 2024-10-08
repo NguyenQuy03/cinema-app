@@ -21,7 +21,7 @@ func NewGetAccessBiz(storage GetAccessStorage) *getAccessBiz {
 
 func (biz *getAccessBiz) GetAccessById(ctx context.Context, id int) (*model.Accessibility, error) {
 	result, err := biz.storage.GetAccess(ctx, map[string]interface{}{
-		"acc_id": id,
+		"id": id,
 	})
 
 	if err != nil {

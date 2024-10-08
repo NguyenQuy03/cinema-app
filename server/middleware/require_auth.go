@@ -9,11 +9,10 @@ import (
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/business"
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/storage/mssql"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
-func RequireAuth(db *gorm.DB, redisDB *redis.Client) func(*gin.Context) {
+func RequireAuth(db *gorm.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
 		bearerToken := c.GetHeader("Authorization")
 

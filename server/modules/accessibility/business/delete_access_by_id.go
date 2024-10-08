@@ -24,7 +24,7 @@ func NewDeleteAccessBiz(storage DeleteAccessStorage) *deleteAccessBiz {
 }
 
 func (biz *deleteAccessBiz) DeleteAccessById(ctx context.Context, id int) error {
-	oldData, err := biz.storage.GetAccess(ctx, map[string]interface{}{"acc_id": id})
+	oldData, err := biz.storage.GetAccess(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
 		if err == common.ErrRecordNotFound {
@@ -34,11 +34,11 @@ func (biz *deleteAccessBiz) DeleteAccessById(ctx context.Context, id int) error 
 		return common.ErrCannotDeleteEntity(err, model.AccessEntityName)
 	}
 
-	if oldData.AccId == 0 {
+	if oldData.Id == 0 {
 		return common.ErrEntityNotFound(errors.New("accessibility not found"), model.AccessEntityName)
 	}
 
-	if err := biz.storage.DeleteAccess(ctx, map[string]interface{}{"acc_id": id}); err != nil {
+	if err := biz.storage.DeleteAccess(ctx, map[string]interface{}{"id": id}); err != nil {
 		return common.ErrCannotDeleteEntity(err, model.AccessEntityName)
 	}
 

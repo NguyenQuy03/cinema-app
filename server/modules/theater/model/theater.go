@@ -13,29 +13,29 @@ const (
 
 type Theater struct {
 	common.SQLModel
-	Cinema        cinemaModel.Cinema        `json:"cinema" gorm:"column:cinema;foreignKey:CinemaId"`
-	Accessibility accessModel.Accessibility `json:"accessibility" gorm:"column:accessibility;foreignKey:AccId"`
-	Experience    experModel.Experience     `json:"experience" gorm:"column:experience;foreignKey:ExpId"`
-	TheaterNum    string                    `json:"theater_num" gorm:"column:theater_num"`
+	Cinema        cinemaModel.Cinema        `json:"cinema" gorm:"column:cinema;foreignKey:Id"`
+	Accessibility accessModel.Accessibility `json:"accessibility" gorm:"column:accessibility;foreignKey:Id"`
+	Experience    experModel.Experience     `json:"experience" gorm:"column:experience;foreignKey:Id"`
+	TheaterNum    int                       `json:"theater_num" gorm:"column:theater_num"`
 }
 
 func (Theater) TableName() string { return "theater" }
 
 type TheaterCreation struct {
 	Id            int                       `json:"-" gorm:"column:id;primaryKey"`
-	Cinema        cinemaModel.Cinema        `json:"cinema" gorm:"column:cinema;foreignKey:CinemaId"`
-	Accessibility accessModel.Accessibility `json:"accessibility" gorm:"column:accessibility;foreignKey:AccId"`
-	Experience    experModel.Experience     `json:"experience" gorm:"column:experience;foreignKey:ExpId"`
-	TheaterNum    string                    `json:"theater_num" gorm:"column:theater_num"`
+	Cinema        cinemaModel.Cinema        `json:"cinema" gorm:"column:cinema;foreignKey:Id"`
+	Accessibility accessModel.Accessibility `json:"accessibility" gorm:"column:accessibility;foreignKey:Id"`
+	Experience    experModel.Experience     `json:"experience" gorm:"column:experience;foreignKey:Id"`
+	TheaterNum    int                       `json:"theater_num" gorm:"column:theater_num"`
 }
 
 func (TheaterCreation) TableName() string { return Theater{}.TableName() }
 
 type TheaterUpdate struct {
-	Cinema        cinemaModel.Cinema        `json:"cinema" gorm:"column:cinema;foreignKey:CinemaId"`
-	Accessibility accessModel.Accessibility `json:"accessibility" gorm:"column:accessibility;foreignKey:AccId"`
-	Experience    experModel.Experience     `json:"experience" gorm:"column:experience;foreignKey:ExpId"`
-	TheaterNum    string                    `json:"theater_num" gorm:"column:theater_num"`
+	Cinema        cinemaModel.Cinema        `json:"cinema" gorm:"column:cinema;foreignKey:Id"`
+	Accessibility accessModel.Accessibility `json:"accessibility" gorm:"column:accessibility;foreignKey:Id"`
+	Experience    experModel.Experience     `json:"experience" gorm:"column:experience;foreignKey:Id"`
+	TheaterNum    int                       `json:"theater_num" gorm:"column:theater_num"`
 }
 
 func (TheaterUpdate) TableName() string { return Theater{}.TableName() }

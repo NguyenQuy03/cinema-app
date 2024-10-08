@@ -28,6 +28,6 @@ func CreateAccessibility(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(data.AccId))
+		ctx.JSON(http.StatusOK, common.NewSimpleAppResponse(data.Id))
 	}
 }

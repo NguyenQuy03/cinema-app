@@ -42,7 +42,7 @@ type User struct {
 func (User) TableName() string { return "user" }
 
 type UserRegister struct {
-	UserId      int    `gorm:"column:user_id;primaryKey"`
+	Id          int    `gorm:"column:id;primaryKey"`
 	Email       string `json:"email" gorm:"column:email"`
 	Password    string `json:"password" gorm:"column:password"`
 	FullName    string `json:"full_name" gorm:"column:full_name"`
