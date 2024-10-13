@@ -19,6 +19,9 @@ func SetupV1Router(router *gin.Engine, db *gorm.DB, redisDB *redis.Client, cld *
 		// Genre
 		setupGenreRoutes(v1, db)
 
+		// Cast Member
+		setupCastMemberRoutes(v1, db)
+
 		// Director
 		setupDirectorRoutes(v1, db)
 
@@ -42,6 +45,15 @@ func SetupV1Router(router *gin.Engine, db *gorm.DB, redisDB *redis.Client, cld *
 
 		// Upload
 		setupUploadRoutes(v1, db, cld)
+
+		// Ticket Type
+		setupTicketTypeRoutes(v1, db)
+
+		// Seat Type
+		setupSeatTypeRoutes(v1, db)
+
+		// Booking
+		setupBookingRoutes(v1, db)
 	}
 
 	return router

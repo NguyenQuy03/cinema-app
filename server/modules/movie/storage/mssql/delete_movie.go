@@ -8,10 +8,14 @@ import (
 )
 
 func (s *sqlStorage) DeleteMovie(ctx context.Context, conds map[string]interface{}) error {
+	inactiveStatus := model.MovieInActiveStatus
+
+	statusValue := inactiveStatus.String()
+
 	if err := s.db.
 		Table(model.Movie{}.TableName()).
 		Where(conds).
-		Updates(map[string]interface{}{"status": model.MovieInActiveStatus}).Error; err != nil {
+		Updates(map[string]interface{}{"status": statusValue}).Error; err != nil {
 		return common.ErrDB(err)
 	}
 

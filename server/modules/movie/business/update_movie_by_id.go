@@ -34,6 +34,8 @@ func (biz *updateMovieBiz) UpdateMovieById(ctx context.Context, id int, newData 
 		return model.ErrMovieDeleted
 	}
 
+	newData.Id = oldData.Id
+
 	if err := biz.storage.UpdateMovie(ctx, map[string]interface{}{"id": id}, newData); err != nil {
 		return common.ErrCannotUpdateEntity(err, model.MovieEntityName)
 	}
