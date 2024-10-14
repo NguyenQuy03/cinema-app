@@ -52,6 +52,9 @@ func SetupV1Router(router *gin.Engine, db *gorm.DB, redisDB *redis.Client, cld *
 		// Seat Type
 		setupSeatTypeRoutes(v1, db)
 
+		// Seat
+		setupSeatRoutes(v1, db)
+
 		// Booking
 		setupBookingRoutes(v1, db)
 	}

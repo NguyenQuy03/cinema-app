@@ -9,9 +9,15 @@ const (
 )
 
 type BookingTicket struct {
-	BookingId      Booking                    `json:"booking_id" gorm:"column:booking;foreignKey:id"`
-	TicketTypeId   ticketTypeModel.TicketType `json:"ticket_type_id" gorm:"column:ticket_type_id;foreignKey:id"`
-	TicketQuantity int                        `json:"ticket_quantity" gorm:"column:ticket_quantity"`
+	BookingId      Booking                    `json:"-" gorm:"column:booking;foreignKey:id"`
+	TicketType     ticketTypeModel.TicketType `json:"-" gorm:"column:ticket_type_id;foreignKey:id"`
+	TicketQuantity int                        `json:"-" gorm:"column:ticket_quanity"`
 }
 
 func (BookingTicket) TableName() string { return "booking_ticket" }
+
+type BookingTicketCreation struct {
+	BookingId      int `json:"-" gorm:"column:booking_id"`
+	TicketTypeId   int `json:"-" gorm:"column:ticket_type_id"`
+	TicketQuantity int `json:"-" gorm:"column:ticket_quanity"`
+}
