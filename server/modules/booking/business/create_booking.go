@@ -10,11 +10,19 @@ import (
 )
 
 type CreateBookingStorage interface {
+<<<<<<< HEAD
 	CreateBooking(ctx context.Context, data *bookingModel.BookingCreation) error
 	CreateBookingSeat(ctx context.Context, data []*bookingModel.BookingSeatCreation) error
 	CreateBookingTicket(ctx context.Context, data []*bookingModel.BookingTicketCreation) error
 
 	UpdateSeatInBulk(ctx context.Context, seatIds []int, field string, value string) error
+=======
+	CreateBooking(ctx context.Context, data *bookingModel.BookingCreation, tx *gorm.DB) error
+	CreateBookingSeat(ctx context.Context, data []*bookingModel.BookingSeatCreation, tx *gorm.DB) error
+	CreateBookingTicket(ctx context.Context, data []*bookingModel.BookingTicketCreation, tx *gorm.DB) error
+
+	UpdateSeatInBulk(ctx context.Context, seatIds []int, field string, value string, tx *gorm.DB) error
+>>>>>>> development
 
 	Begin() *gorm.DB
 }
@@ -51,12 +59,24 @@ func (biz *createBookingBiz) CreateBooking(ctx context.Context, data *bookingMod
 			}
 		}
 	}()
+<<<<<<< HEAD
 	// Create the booking
 	if err := tx.Table("booking").Create(data).Error; err != nil {
+=======
+
+	// Create the booking
+	if err := biz.storage.CreateBooking(ctx, data, tx); err != nil {
+>>>>>>> development
 		tx.Rollback()
 		return common.ErrCannotCreateEntity(err, bookingModel.BookingEntityName)
 	}
 
+<<<<<<< HEAD
+=======
+	// Check availability of seat
+	// Check age rating
+
+>>>>>>> development
 	// Handle Booking_Seat
 	bookingSeats := make([]*bookingModel.BookingSeatCreation, 0, len(data.Seats))
 	for _, seatId := range data.Seats {
@@ -66,14 +86,22 @@ func (biz *createBookingBiz) CreateBooking(ctx context.Context, data *bookingMod
 		})
 	}
 
+<<<<<<< HEAD
 	if err := tx.Create(bookingSeats).Error; err != nil {
+=======
+	if err := biz.storage.CreateBookingSeat(ctx, bookingSeats, tx); err != nil {
+>>>>>>> development
 		tx.Rollback()
 		return common.ErrCannotCreateEntity(err, bookingModel.BookingEntityName)
 	}
 
 	// Update seat status to reserved
 	reservedStatus := seatModel.SeatReservedStatus
+<<<<<<< HEAD
 	if err := biz.storage.UpdateSeatInBulk(ctx, data.Seats, "status", reservedStatus.String()); err != nil {
+=======
+	if err := biz.storage.UpdateSeatInBulk(ctx, data.Seats, "status", reservedStatus.String(), tx); err != nil {
+>>>>>>> development
 		tx.Rollback()
 		return common.ErrCannotCreateEntity(err, bookingModel.BookingEntityName)
 	}
@@ -94,7 +122,11 @@ func (biz *createBookingBiz) CreateBooking(ctx context.Context, data *bookingMod
 		})
 	}
 
+<<<<<<< HEAD
 	if err := tx.Create(bookingTickets).Error; err != nil {
+=======
+	if err := biz.storage.CreateBookingTicket(ctx, bookingTickets, tx); err != nil {
+>>>>>>> development
 		tx.Rollback()
 		return common.ErrCannotCreateEntity(err, bookingModel.BookingEntityName)
 	}

@@ -11,7 +11,10 @@ import (
 func (s *sqlStorage) GetShowing(ctx context.Context, conds map[string]interface{}) (*model.Showing, error) {
 	var data model.Showing
 
-	if err := s.db.Preload("Movie").Preload("Theater").Where(conds).First(&data).Error; err != nil {
+	if err := s.db.
+		Preload("Movie").
+		Preload("Theater").
+		Where(conds).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrRecordNotFound
 		}

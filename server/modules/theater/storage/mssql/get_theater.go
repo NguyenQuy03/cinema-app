@@ -11,7 +11,12 @@ import (
 func (s *sqlStorage) GetTheater(ctx context.Context, conds map[string]interface{}) (*model.Theater, error) {
 	var data model.Theater
 
-	if err := s.db.Preload("Cinema").Preload("Accessibility").Preload("Experience").Where(conds).First(&data).Error; err != nil {
+	if err := s.db.
+		Where(conds).
+		Preload("Cinema").
+		Preload("Accessibility").
+		Preload("Experience").
+		First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrRecordNotFound
 		}

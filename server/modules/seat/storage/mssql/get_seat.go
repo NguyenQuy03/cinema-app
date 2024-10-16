@@ -11,7 +11,15 @@ import (
 func (s *sqlStorage) GetSeat(ctx context.Context, conds map[string]interface{}) (*model.Seat, error) {
 	var data model.Seat
 
+<<<<<<< HEAD
 	if err := s.db.Where(conds).Preload("Theater").Preload("SeatType").First(&data).Error; err != nil {
+=======
+	if err := s.db.
+		Where(conds).
+		Preload("Theater").
+		Preload("SeatType").
+		First(&data).Error; err != nil {
+>>>>>>> development
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrRecordNotFound
 		}

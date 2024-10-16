@@ -15,7 +15,8 @@ const (
 
 type Movie struct {
 	common.SQLModel
-	Director    directorModel.Director    `json:"director" gorm:"column:director;foreignKey:id"`
+	DirectorID  int                       `json:"-" gorm:"column:director_id"`
+	Director    *directorModel.Director   `json:"director" gorm:"foreignKey:director_id;references:Id"`
 	Genres      []genreModel.Genre        `json:"genres" gorm:"many2many:movie_genre;foreignKey:Id;joinForeignKey:MovieId;References:Id;joinReferences:GenreId"`
 	CastMembers []castMemModel.CastMember `json:"cast_members" gorm:"many2many:movie_cast;foreignKey:Id;joinForeignKey:MovieId;References:Id;joinReferences:CastId"`
 	Title       string                    `json:"title" gorm:"column:title"`

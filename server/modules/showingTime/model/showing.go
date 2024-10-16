@@ -12,29 +12,31 @@ const (
 
 type Showing struct {
 	common.SQLModel
-	Movie       movieModel.Movie     `json:"movie" gorm:"column:movie;foreignKey:MovieId"`
-	Theater     theaterModel.Theater `json:"theater" gorm:"column:theater;foreignKey:TheaterId"`
-	ShowingDate string               `json:"showing_date" gorm:"column:showing_date"`
-	BasePrice   int                  `json:"base_price" gorm:"column:base_price"`
+	MovieId     int                   `json:"-" gorm:"column:movie_id"`
+	Movie       *movieModel.Movie     `json:"movie" gorm:"foreignKey:movie_id;references:id"`
+	TheaterId   int                   `json:"-" gorm:"column:theater_id"`
+	Theater     *theaterModel.Theater `json:"theater" gorm:"foreignKey:theater_id;references:id"`
+	ShowingDate string                `json:"showing_date" gorm:"column:showing_date"`
+	BasePrice   int                   `json:"base_price" gorm:"column:base_price"`
 }
 
 func (Showing) TableName() string { return "showing_time" }
 
 type ShowingCreation struct {
-	Id          int                  `json:"-" gorm:"column:id;primaryKey"`
-	Movie       movieModel.Movie     `json:"movie" gorm:"column:movie;foreignKey:MovieId"`
-	Theater     theaterModel.Theater `json:"theater" gorm:"column:theater;foreignKey:TheaterId"`
-	ShowingDate string               `json:"showing_date" gorm:"column:showing_date"`
-	BasePrice   int                  `json:"base_price" gorm:"column:base_price"`
+	Id          int                   `json:"-" gorm:"column:id;primaryKey"`
+	Movie       *movieModel.Movie     `json:"movie" gorm:"column:movie;foreignKey:id"`
+	Theater     *theaterModel.Theater `json:"theater" gorm:"column:theater;foreignKey:id"`
+	ShowingDate string                `json:"showing_date" gorm:"column:showing_date"`
+	BasePrice   int                   `json:"base_price" gorm:"column:base_price"`
 }
 
 func (ShowingCreation) TableName() string { return Showing{}.TableName() }
 
 type ShowingUpdate struct {
-	Movie       movieModel.Movie     `json:"movie" gorm:"column:movie;foreignKey:MovieId"`
-	Theater     theaterModel.Theater `json:"theater" gorm:"column:theater;foreignKey:TheaterId"`
-	ShowingDate string               `json:"showing_date" gorm:"column:showing_date"`
-	BasePrice   int                  `json:"base_price" gorm:"column:base_price"`
+	Movie       *movieModel.Movie     `json:"movie" gorm:"column:movie;foreignKey:id"`
+	Theater     *theaterModel.Theater `json:"theater" gorm:"column:theater;foreignKey:id"`
+	ShowingDate string                `json:"showing_date" gorm:"column:showing_date"`
+	BasePrice   int                   `json:"base_price" gorm:"column:base_price"`
 }
 
 func (ShowingUpdate) TableName() string { return Showing{}.TableName() }

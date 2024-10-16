@@ -9,7 +9,11 @@ const (
 )
 
 type BookingTicket struct {
+<<<<<<< HEAD
 	BookingId      Booking                    `json:"-" gorm:"column:booking;foreignKey:id"`
+=======
+	Booking        Booking                    `json:"-" gorm:"column:booking_id;foreignKey:id"`
+>>>>>>> development
 	TicketType     ticketTypeModel.TicketType `json:"-" gorm:"column:ticket_type_id;foreignKey:id"`
 	TicketQuantity int                        `json:"-" gorm:"column:ticket_quanity"`
 }
@@ -21,3 +25,8 @@ type BookingTicketCreation struct {
 	TicketTypeId   int `json:"-" gorm:"column:ticket_type_id"`
 	TicketQuantity int `json:"-" gorm:"column:ticket_quanity"`
 }
+<<<<<<< HEAD
+=======
+
+func (BookingTicketCreation) TableName() string { return BookingTicket{}.TableName() }
+>>>>>>> development
