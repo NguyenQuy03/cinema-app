@@ -2,7 +2,8 @@ package model
 
 import (
 	"github.com/NguyenQuy03/cinema-app/server/common"
-	"github.com/NguyenQuy03/cinema-app/server/modules/showingTime/model"
+	userModel "github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
+	showingModel "github.com/NguyenQuy03/cinema-app/server/modules/showingTime/model"
 )
 
 const (
@@ -11,8 +12,11 @@ const (
 
 type Booking struct {
 	common.SQLModel
-	Showing model.Showing  `json:"showing" gorm:"column:showing;foreignKey:id"`
-	Status  *BookingStatus `json:"status" gorm:"column:status"`
+	ShowingId int                   `json:"-" gorm:"column:show_id"`
+	Showing   *showingModel.Showing `json:"showing" gorm:"foreignKey:ShowingId;references:id"`
+	UserId    int                   `json:"-" gorm:"column:user_id"`
+	User      *userModel.User       `json:"user" gorm:"foreignKey:UserId;references:id"`
+	Status    *BookingStatus        `json:"status" gorm:"column:status"`
 }
 
 func (Booking) TableName() string { return "booking" }
@@ -29,8 +33,8 @@ type BookingCreation struct {
 func (BookingCreation) TableName() string { return Booking{}.TableName() }
 
 type BookingUpdate struct {
-	Showing model.Showing  `json:"showing" gorm:"column:showing;foreignKey:id"`
-	Status  *BookingStatus `json:"status" gorm:"column:status"`
+	Showing *showingModel.Showing `json:"showing" gorm:"column:showing;foreignKey:id"`
+	Status  *BookingStatus        `json:"status" gorm:"column:status"`
 }
 
 func (BookingUpdate) TableName() string { return Booking{}.TableName() }

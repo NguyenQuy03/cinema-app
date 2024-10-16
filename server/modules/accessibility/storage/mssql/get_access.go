@@ -11,7 +11,6 @@ import (
 func (s *sqlStorage) GetAccess(ctx context.Context, conds map[string]interface{}) (*model.Accessibility, error) {
 	var data model.Accessibility
 
-	// Preload genres while fetching the movie
 	if err := s.db.Where(conds).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrRecordNotFound

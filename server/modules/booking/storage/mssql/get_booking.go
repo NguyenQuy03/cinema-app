@@ -11,7 +11,11 @@ import (
 func (s *sqlStorage) GetBooking(ctx context.Context, conds map[string]interface{}) (*model.Booking, error) {
 	var data model.Booking
 
-	if err := s.db.Where(conds).First(&data).Error; err != nil {
+	if err := s.db.
+		Where(conds).
+		Preload("User").
+		Preload("Showing").
+		First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrRecordNotFound
 		}
@@ -19,5 +23,4 @@ func (s *sqlStorage) GetBooking(ctx context.Context, conds map[string]interface{
 	}
 
 	return &data, nil
-
 }

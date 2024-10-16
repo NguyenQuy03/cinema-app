@@ -12,10 +12,10 @@ func (s *sqlStorage) GetMovie(ctx context.Context, conds map[string]interface{})
 	var data model.Movie
 
 	if err := s.db.
+		Where(conds).
 		Preload("Genres").
 		Preload("Director").
 		Preload("CastMembers").
-		Where(conds).
 		First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrRecordNotFound
@@ -24,5 +24,4 @@ func (s *sqlStorage) GetMovie(ctx context.Context, conds map[string]interface{})
 	}
 
 	return &data, nil
-
 }

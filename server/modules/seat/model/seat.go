@@ -12,10 +12,12 @@ const (
 
 type Seat struct {
 	common.SQLModel
-	SeatType     seatTypeModel.SeatType `json:"seat_type" gorm:"column:seatType;foreignKey:id"`
-	Theater      theaterModel.Theater   `json:"theater" gorm:"column:Theater;foreignKey:id"`
-	SeatLocation string                 `json:"seat_location" gorm:"seat_location"`
-	Status       *SeatStatus            `json:"status" gorm:"status"`
+	SeatTypeId   int                     `json:"-" gorm:"column:seat_type_id"`
+	SeatType     *seatTypeModel.SeatType `json:"seat_type" gorm:"foreignKey:seat_type_id;references:id"`
+	TheaterId    int                     `json:"-" gorm:"column:theater_id"`
+	Theater      *theaterModel.Theater   `json:"theater" gorm:"foreignKey:theater_id;references:id"`
+	SeatLocation string                  `json:"seat_location" gorm:"seat_location"`
+	Status       *SeatStatus             `json:"status" gorm:"status"`
 }
 
 func (Seat) TableName() string { return "seat" }
@@ -31,10 +33,10 @@ type SeatCreation struct {
 func (SeatCreation) TableName() string { return Seat{}.TableName() }
 
 type SeatUpdate struct {
-	SeatType     seatTypeModel.SeatType `json:"seat_type" gorm:"column:seatType;foreignKey:id"`
-	Theater      theaterModel.Theater   `json:"theater" gorm:"column:Theater;foreignKey:id"`
-	SeatLocation string                 `json:"seat_location" gorm:"seat_location"`
-	Status       *SeatStatus            `json:"status" gorm:"status"`
+	SeatType     *seatTypeModel.SeatType `json:"seat_type" gorm:"column:seatType;foreignKey:id"`
+	Theater      *theaterModel.Theater   `json:"theater" gorm:"column:Theater;foreignKey:id"`
+	SeatLocation string                  `json:"seat_location" gorm:"seat_location"`
+	Status       *SeatStatus             `json:"status" gorm:"status"`
 }
 
 func (SeatUpdate) TableName() string { return Seat{}.TableName() }

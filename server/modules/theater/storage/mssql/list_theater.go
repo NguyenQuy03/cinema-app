@@ -14,7 +14,13 @@ func (s *sqlStorage) ListTheater(ctx context.Context, p *common.Paging, params .
 		return nil, common.ErrDB(err)
 	}
 
-	if err := s.db.Preload("Cinema").Preload("Accessibility").Preload("Experience").Order("id desc").Offset((p.Page - 1) * p.Limit).Limit(p.Limit).Find(&result).Error; err != nil {
+	if err := s.db.
+		Preload("Cinema").
+		Preload("Accessibility").
+		Preload("Experience").
+		Order("id desc").
+		Offset((p.Page - 1) * p.Limit).Limit(p.Limit).
+		Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
 
