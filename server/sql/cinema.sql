@@ -1,5 +1,5 @@
 
-/* PLACE */
+	-- PLACE
 EXEC CreateIntIdPKTable
 	'place',
 	'
@@ -7,7 +7,7 @@ EXEC CreateIntIdPKTable
 		[place_slug]	VARCHAR(50) UNIQUE,
 	';
 
-/* CINEMA */
+	-- CINEMA
 EXEC CreateIntIdPKTable
 	'cinema',
 	'
@@ -17,7 +17,7 @@ EXEC CreateIntIdPKTable
 		CONSTRAINT FK_cienma_place FOREIGN KEY (place_id) REFERENCES place(id),
 	';
 
-/* ACCESSIBILITY */
+	-- ACCESSIBILITY
 EXEC CreateIntIdPKTable
 	'accessibility',
 	'
@@ -25,7 +25,7 @@ EXEC CreateIntIdPKTable
 		[shorten]		VARCHAR(10),
 	';
 
-/* EXPERIENCE */
+	-- EXPERIENCE
 EXEC CreateIntIdPKTable
 	'experience',
 	'
@@ -34,7 +34,7 @@ EXEC CreateIntIdPKTable
 		CONSTRAINT uniq_feature UNIQUE ([exp_feature])
 	';
 
-/* THEATER */
+	-- THEATER
 EXEC CreateIntIdPKTable
 	'theater',
 	'
@@ -48,7 +48,7 @@ EXEC CreateIntIdPKTable
 		CONSTRAINT UQ_theater_num_cinema UNIQUE (theater_num, cinema_id)
 	';
 
-/* SHOWING_TIME */
+	-- SHOWING_TIME
 EXEC CreateIntIdPKTable
 	'showing_time',
 	'

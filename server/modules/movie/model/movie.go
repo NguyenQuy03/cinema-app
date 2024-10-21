@@ -15,19 +15,19 @@ const (
 
 type Movie struct {
 	common.SQLModel
-	DirectorID  int                       `json:"-" gorm:"column:director_id"`
-	Director    *directorModel.Director   `json:"director" gorm:"foreignKey:director_id;references:Id"`
-	Genres      []genreModel.Genre        `json:"genres" gorm:"many2many:movie_genre;foreignKey:Id;joinForeignKey:MovieId;References:Id;joinReferences:GenreId"`
-	CastMembers []castMemModel.CastMember `json:"cast_members" gorm:"many2many:movie_cast;foreignKey:Id;joinForeignKey:MovieId;References:Id;joinReferences:CastId"`
-	Title       string                    `json:"title" gorm:"column:title"`
-	Status      *MovieStatus              `json:"status" gorm:"column:status"`
-	Duration    int                       `json:"duration" gorm:"column:duration"`
-	TrailerLink string                    `json:"trailer_link" gorm:"column:trailer_link"`
-	Description string                    `json:"description" gorm:"column:description"`
-	PosterImg   string                    `json:"poster_img" gorm:"column:poster_img"`
-	HeaderImg   string                    `json:"header_img" gorm:"column:header_img"`
-	AgeRating   int                       `json:"age_rating" gorm:"column:age_rating"`
-	ReleaseDate time.Time                 `json:"release_date" gorm:"column:release_date"`
+	DirectorID    int                       `json:"-" gorm:"column:director_id"`
+	Director      *directorModel.Director   `json:"director" gorm:"foreignKey:director_id;references:Id"`
+	Genres        []genreModel.Genre        `json:"genres" gorm:"many2many:movie_genre;foreignKey:Id;joinForeignKey:MovieId;References:Id;joinReferences:GenreId"`
+	CastMembers   []castMemModel.CastMember `json:"cast_members" gorm:"many2many:movie_cast;foreignKey:Id;joinForeignKey:MovieId;References:Id;joinReferences:CastId"`
+	Title         string                    `json:"title" gorm:"column:title"`
+	Status        *MovieStatus              `json:"status" gorm:"column:status"`
+	Duration      int                       `json:"duration" gorm:"column:duration"`
+	TrailerLink   string                    `json:"trailer_link" gorm:"column:trailer_link"`
+	Description   string                    `json:"description" gorm:"column:description"`
+	PosterImg     string                    `json:"poster_img" gorm:"column:poster_img"`
+	HeaderImg     string                    `json:"header_img" gorm:"column:header_img"`
+	AgeRatingCode string                    `json:"age_rating" gorm:"column:age_rating"`
+	ReleaseDate   time.Time                 `json:"release_date" gorm:"column:release_date"`
 }
 
 func (Movie) TableName() string { return "movie" }

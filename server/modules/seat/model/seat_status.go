@@ -12,9 +12,10 @@ type SeatStatus int
 const (
 	SeatReservedStatus SeatStatus = iota
 	SeatAvailableStatus
+	SeatDisabledStatus
 )
 
-var allSeatStatuses = [2]string{"reserved", "available"}
+var allSeatStatuses = [3]string{"reserved", "available", "disabled"}
 
 func (status *SeatStatus) String() string {
 	return allSeatStatuses[*status]
