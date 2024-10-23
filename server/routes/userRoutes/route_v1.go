@@ -1,13 +1,14 @@
 package userRoutes
 
 import (
+	"github.com/NguyenQuy03/cinema-app/server/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
 func SetupV1Router(router *gin.Engine, db *gorm.DB, redisDB *redis.Client) *gin.Engine {
-	v1 := router.Group("v1")
+	v1 := router.Group("v1", middleware.RequireAuth(db))
 	{
 		// Movie
 		setupMovieRoutes(v1, db)

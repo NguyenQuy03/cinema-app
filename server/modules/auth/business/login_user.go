@@ -48,13 +48,13 @@ func (biz *loginUserBiz) Login(ctx context.Context, data *model.UserLogin) (*mod
 	}
 
 	// Genarate Tokens
-	accessToken, expAcTokenSecs, err := biz.jwtProvider.GenerateAccessToken(user.Email)
+	accessToken, expAcTokenSecs, err := biz.jwtProvider.GenerateAccessToken(user.Email, model.IsAdmin(user.RoleCode))
 
 	if err != nil {
 		return nil, err
 	}
 
-	refreshToken, expReTokenSecs, err := biz.jwtProvider.GenerateRefreshToken(user.Email)
+	refreshToken, expReTokenSecs, err := biz.jwtProvider.GenerateRefreshToken(user.Email, model.IsAdmin(user.RoleCode))
 
 	if err != nil {
 		return nil, err

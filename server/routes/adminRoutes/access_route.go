@@ -1,14 +1,13 @@
 package adminRoutes
 
 import (
-	"github.com/NguyenQuy03/cinema-app/server/middleware"
 	ginAccessTrans "github.com/NguyenQuy03/cinema-app/server/modules/accessibility/transport/gin"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func setupAccessRoutes(v1 *gin.RouterGroup, db *gorm.DB) {
-	accesses := v1.Group("accesses", middleware.RequireAuth(db))
+	accesses := v1.Group("accesses")
 	{
 		accesses.POST("", ginAccessTrans.CreateAccessibility(db))
 		accesses.GET("", ginAccessTrans.ListAccessibility(db))

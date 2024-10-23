@@ -47,7 +47,7 @@ func (biz *registerUserBiz) RegisterUser(ctx context.Context, data *model.UserRe
 	}
 
 	// Hash password
-	hashPass, err := bcrypt.GenerateFromPassword([]byte(data.Password), 10)
+	hashPass, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 
 	if err != nil {
 		return model.ErrHashPassword

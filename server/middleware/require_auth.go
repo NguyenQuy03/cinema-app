@@ -1,12 +1,12 @@
 package middleware
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 
 	"github.com/NguyenQuy03/cinema-app/server/common"
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/business"
+	"github.com/NguyenQuy03/cinema-app/server/modules/auth/model"
 	"github.com/NguyenQuy03/cinema-app/server/modules/auth/storage/mssql"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -19,8 +19,7 @@ func RequireAuth(db *gorm.DB) func(*gin.Context) {
 		jwtProvider := new(common.JWTProvider)
 
 		if bearerToken == "" || !strings.HasPrefix(bearerToken, "Bearer ") {
-			err := common.NewUnauthorized(errors.New("missing or invalid token"), "Authorization header is missing or invalid", "TOKEN_MISSING_OR_INVALID_ERR")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthoried)
 			return
 		}
 
@@ -35,7 +34,7 @@ func RequireAuth(db *gorm.DB) func(*gin.Context) {
 
 		// Store current use context
 		if _, exists := c.Get("user"); !exists {
-			// Extract email from token
+			// Extract claims from token
 			claims, err := jwtProvider.ParseToken(tokenString)
 
 			if err != nil {
@@ -55,6 +54,12 @@ func RequireAuth(db *gorm.DB) func(*gin.Context) {
 			}
 
 			c.Set("user", user)
+
+			if model.IsAdmin(user.RoleCode) {
+				c.Set("isAdmin", true)
+			} else {
+				c.Set("isAdmin", false)
+			}
 		}
 
 		c.Next()

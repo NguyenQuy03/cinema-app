@@ -1,4 +1,4 @@
-package userRoutes
+package adminRoutes
 
 import (
 	ginShowingTrans "github.com/NguyenQuy03/cinema-app/server/modules/showingTime/transport/gin"
@@ -9,7 +9,10 @@ import (
 func setupShowingRoutes(v1 *gin.RouterGroup, db *gorm.DB) {
 	showings := v1.Group("showings")
 	{
+		showings.POST("", ginShowingTrans.CreateShowing(db))
 		showings.GET("", ginShowingTrans.ListShowing(db))
 		showings.GET("/:id", ginShowingTrans.GetShowing(db))
+		showings.PATCH("/:id", ginShowingTrans.UpdateShowing(db))
+		showings.DELETE("/:id", ginShowingTrans.DeleteShowing(db))
 	}
 }
