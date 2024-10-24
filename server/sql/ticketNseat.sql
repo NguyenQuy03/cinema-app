@@ -1,5 +1,5 @@
 
-/* TICKET TYPE */
+	-- TICKET TYPE
 EXEC CreateIntIdPKTable
 	'ticket_type',
 	'
@@ -8,7 +8,7 @@ EXEC CreateIntIdPKTable
 		[ticket_surcharge]	INT
 	'
 
-/* SEAT TYPE */
+	-- SEAT TYPE 
 EXEC CreateIntIdPKTable
 	'seat_type',
 	'
@@ -17,15 +17,19 @@ EXEC CreateIntIdPKTable
 		[seat_surcharge]	INT
 	'
 
-/* BOOKING */
+	-- BOOKING
 EXEC CreateIntIdPKTable
 	'booking',
 	'
 		[show_id]		INT,
+		[user_id]		INT,
+		[status]		VARCHAR(20),
 		CONSTRAINT FK_booking_showing FOREIGN KEY ([show_id]) REFERENCES showing_time(id),
+		CONSTRAINT FK_booking_user FOREIGN KEY ([user_id]) REFERENCES [user](id),
+		CHECK ([status] IN (''pending'', ''confirmed'', ''canceled''))
 	'
 
-/* BOOKING_TICKET */
+	-- BOOKING TICKET
 CREATE TABLE booking_ticket (
     [booking_id]		INT,
 	[ticket_type_id]	INT,
@@ -35,7 +39,7 @@ CREATE TABLE booking_ticket (
 	CONSTRAINT FK_bt_booking FOREIGN KEY ([booking_id]) REFERENCES booking(id),
 );
 
-/* SEAT */
+  	-- SEAT
 EXEC CreateIntIdPKTable
 	'seat',
 	'
@@ -46,7 +50,7 @@ EXEC CreateIntIdPKTable
 		CONSTRAINT FK_seat_theater FOREIGN KEY ([theater_id]) REFERENCES theater(id),
 	'
 
-/* BOOKING_SEAT */
+	-- BOOKING SEAT
 CREATE TABLE booking_seat (
     [booking_id]	INT,
 	[seat_id]		INT,

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -14,8 +13,8 @@ const (
 	RefreshToken = "refresh_token"
 	AccessToken  = "access_token"
 
-	expireAccessTokenInSeconds  = 60 * 30      // 30 mins
-	expireRefreshTokenInSeconds = 60 * 60 * 24 // 24 hours
+	ExpireAccessTokenInSeconds  = 60 * 30      // 30 mins
+	ExpireRefreshTokenInSeconds = 60 * 60 * 24 // 24 hours
 )
 
 var (
@@ -46,28 +45,30 @@ var (
 		"The token claims type is invalid",
 		"CLAIMS_TYPE_ASSERTION_ERR",
 	)
-
-	ErrRequireLogin = NewUnauthorized(
-		errors.New("empty token"),
-		"Session expired. Please re-login",
-		"EMPTY_TOKEN",
-	)
 )
 
 type JWTProvider struct{}
 
-func (provider *JWTProvider) GenerateAccessToken(sub string) (string, int, error) {
-	return provider.issueToken(sub, expireAccessTokenInSeconds)
+type CustomClaims struct {
+	jwt.RegisteredClaims
+	Admin bool `json:"admin"`
 }
 
-func (provider *JWTProvider) GenerateRefreshToken(sub string) (string, int, error) {
-	return provider.issueToken(sub, expireRefreshTokenInSeconds)
+func (provider *JWTProvider) GenerateAccessToken(sub string, isAdmin bool) (string, int, error) {
+	return provider.issueToken(sub, ExpireAccessTokenInSeconds, isAdmin)
 }
 
-func (provider *JWTProvider) issueToken(sub string, expTime int) (string, int, error) {
-	claims := jwt.RegisteredClaims{
-		Subject:   sub,
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expTime) * time.Second)),
+func (provider *JWTProvider) GenerateRefreshToken(sub string, isAdmin bool) (string, int, error) {
+	return provider.issueToken(sub, ExpireRefreshTokenInSeconds, isAdmin)
+}
+
+func (provider *JWTProvider) issueToken(sub string, expTime int, isAdmin bool) (string, int, error) {
+	claims := CustomClaims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   sub,
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expTime) * time.Second)),
+		},
+		Admin: isAdmin,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -112,10 +113,10 @@ func (provider *JWTProvider) ValidateToken(tokenString string) (*jwt.Token, erro
 	return token, nil
 }
 
-func (provider *JWTProvider) ParseToken(tokenString string) (claims *jwt.RegisteredClaims, err error) {
-	var rc jwt.RegisteredClaims
+func (provider *JWTProvider) ParseToken(tokenString string) (claims *CustomClaims, err error) {
+	var cc CustomClaims
 
-	token, err := jwt.ParseWithClaims(tokenString, &rc, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &cc, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -127,19 +128,5 @@ func (provider *JWTProvider) ParseToken(tokenString string) (claims *jwt.Registe
 		return nil, err
 	}
 
-	return &rc, nil
-}
-
-func (provider *JWTProvider) CompareToken(token1, token2 string) (bool, error) {
-	// Handle Expired Token
-	if token1 == "" || token2 == "" {
-		return false, ErrRequireLogin
-	}
-
-	// Compare tokens
-	if !strings.EqualFold(token1, token2) {
-		return false, ErrInvalidToken
-	}
-
-	return true, nil
+	return &cc, nil
 }

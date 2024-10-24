@@ -16,10 +16,9 @@ type UpdateSessionStorage interface {
 
 type JWTProvider interface {
 	ValidateToken(tokenString string) (*jwt.Token, error)
-	GenerateAccessToken(sub string) (string, int, error)
-	GenerateRefreshToken(sub string) (string, int, error)
-	ParseToken(tokenString string) (claims *jwt.RegisteredClaims, err error)
-	CompareToken(token1, token2 string) (bool, error)
+	GenerateAccessToken(sub string, isAdmin bool) (string, int, error)
+	GenerateRefreshToken(sub string, isAdmin bool) (string, int, error)
+	ParseToken(tokenString string) (claims *common.CustomClaims, err error)
 }
 
 type refreshTokenBiz struct {
@@ -61,11 +60,14 @@ func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, r
 
 	prevRefreshToken := userSession[common.RefreshToken]
 
-	// Compare Tokens
-	_, err = biz.jwtProvider.CompareToken(prevRefreshToken, refreshToken)
+	// Handle Expired Token
+	if prevRefreshToken == "" || refreshToken == "" {
+		return nil, model.ErrRequireLogin
+	}
 
-	if err != nil {
-		return nil, err
+	// Compare Tokens
+	if prevRefreshToken != refreshToken {
+		return nil, model.ErrInvalidToken
 	}
 
 	// Generate and return new access token
@@ -77,7 +79,7 @@ func (biz *refreshTokenBiz) RefreshToken(c context.Context, req *http.Request, r
 		return nil, err
 	}
 
-	accessToken, expAcTokenSecs, err := biz.jwtProvider.GenerateAccessToken(user.Email)
+	accessToken, expAcTokenSecs, err := biz.jwtProvider.GenerateAccessToken(user.Email, model.IsAdmin(user.RoleCode))
 
 	if err != nil {
 		return nil, err

@@ -6,6 +6,7 @@ type Token struct {
 }
 
 type AuthResponse struct {
-	AccessToken  Token `json:"access_token"`
-	RefreshToken Token `json:"-"`
+	AccessToken  Token  `json:"access_token"`
+	RefreshToken Token  `json:"-"`
+	UserRole     string `json:"role"`
 }

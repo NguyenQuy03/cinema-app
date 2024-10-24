@@ -1,12 +1,12 @@
 
-/* DIRECTOR */
+	-- DIRECTOR
 EXEC CreateIntIdPKTable
 	'director',
 	'
 		[director_name] NVARCHAR(100)
 	';
 
-/* MOVIE */
+	-- MOVIE
 EXEC CreateIntIdPKTable
 	'movie', 
 	'
@@ -23,7 +23,7 @@ EXEC CreateIntIdPKTable
 		FOREIGN KEY ([director_id]) REFERENCES director([id])
 	'
 
-/* CAST_MEMBER */
+-- CAST_MEMBER
 EXEC CreateIntIdPKTable
 	'cast_member',
 	'
@@ -32,7 +32,7 @@ EXEC CreateIntIdPKTable
 		[bio]		NVARCHAR(MAX) DEFAULT NULL
 	';
 
-/* GENRE */
+-- GENRE
 EXEC CreateIntIdPKTable
 	'genre',
 	'
@@ -41,14 +41,14 @@ EXEC CreateIntIdPKTable
 	';
 
 
-/* MOVIE_GENRE */
+-- MOVIE_GENRE
 CREATE TABLE movie_genre (
 	[movie_id] INT REFERENCES movie([id]),
 	[genre_id] INT REFERENCES genre([id]),
 	CONSTRAINT PK_movie_genre PRIMARY KEY([movie_id], [genre_id])
 )
 
-/* MOVIE_CAST */
+-- MOVIE_CAST
 CREATE TABLE movie_cast (
 	[movie_id]	INT REFERENCES movie([id]),
 	[cast_id]	INT REFERENCES cast_member([id])	

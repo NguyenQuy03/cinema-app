@@ -1,0 +1,15 @@
+package userRoutes
+
+import (
+	ginPlaceTrans "github.com/NguyenQuy03/cinema-app/server/modules/place/transport/gin"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
+
+func setupPlaceRoutes(v1 *gin.RouterGroup, db *gorm.DB) {
+	places := v1.Group("places")
+	{
+		places.GET("", ginPlaceTrans.ListPlace(db))
+		places.GET("/:id", ginPlaceTrans.GetPlace(db))
+	}
+}
