@@ -83,5 +83,6 @@ func (biz *loginUserBiz) Login(ctx context.Context, data *model.UserLogin) (*mod
 			Token:     refreshToken,
 			ExpiredIn: expReTokenSecs,
 		},
+		UserRole: user.RoleCode,
 	}, nil
 }

@@ -42,22 +42,26 @@ func (biz *registerUserBiz) RegisterUser(ctx context.Context, data *model.UserRe
 
 	// Check user has already exist in DB or not
 	_, err = biz.storage.GetUser(ctx, map[string]interface{}{"email": data.Email})
-	if err != nil && err != common.ErrRecordNotFound {
+	if err == nil {
 		return model.ErrUserExisted
-	}
+	} else {
+		if err == common.ErrRecordNotFound {
+			// Hash password
+			hashPass, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 
-	// Hash password
-	hashPass, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+			if err != nil {
+				return model.ErrHashPassword
+			}
 
-	if err != nil {
-		return model.ErrHashPassword
-	}
+			data.Password = string(hashPass)
 
-	data.Password = string(hashPass)
-
-	// Register new user
-	if err := biz.storage.CreateUser(ctx, data); err != nil {
-		return common.ErrCannotCreateEntity(err, model.UserEntityName)
+			// Register new user
+			if err := biz.storage.CreateUser(ctx, data); err != nil {
+				return common.ErrCannotCreateEntity(err, model.UserEntityName)
+			}
+		} else {
+			return err
+		}
 	}
 
 	return nil

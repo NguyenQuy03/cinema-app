@@ -24,4 +24,12 @@ var (
 		"your email or password is incorrect",
 		"LOGIN_FAILURE",
 	)
+
+	ErrRequireLogin = common.NewUnauthorized(
+		errors.New("empty token"),
+		"Session expired. Please re-login",
+		"EMPTY_TOKEN",
+	)
+
+	ErrInvalidToken = common.NewUnauthorized(errors.New("token is invalid"), "The token provided is invalid", "TOKEN_INVALID_ERR")
 )

@@ -13,8 +13,8 @@ const (
 	RefreshToken = "refresh_token"
 	AccessToken  = "access_token"
 
-	expireAccessTokenInSeconds  = 60 * 30      // 30 mins
-	expireRefreshTokenInSeconds = 60 * 60 * 24 // 24 hours
+	ExpireAccessTokenInSeconds  = 60 * 30      // 30 mins
+	ExpireRefreshTokenInSeconds = 60 * 60 * 24 // 24 hours
 )
 
 var (
@@ -45,12 +45,6 @@ var (
 		"The token claims type is invalid",
 		"CLAIMS_TYPE_ASSERTION_ERR",
 	)
-
-	ErrRequireLogin = NewUnauthorized(
-		errors.New("empty token"),
-		"Session expired. Please re-login",
-		"EMPTY_TOKEN",
-	)
 )
 
 type JWTProvider struct{}
@@ -61,11 +55,11 @@ type CustomClaims struct {
 }
 
 func (provider *JWTProvider) GenerateAccessToken(sub string, isAdmin bool) (string, int, error) {
-	return provider.issueToken(sub, expireAccessTokenInSeconds, isAdmin)
+	return provider.issueToken(sub, ExpireAccessTokenInSeconds, isAdmin)
 }
 
 func (provider *JWTProvider) GenerateRefreshToken(sub string, isAdmin bool) (string, int, error) {
-	return provider.issueToken(sub, expireRefreshTokenInSeconds, isAdmin)
+	return provider.issueToken(sub, ExpireRefreshTokenInSeconds, isAdmin)
 }
 
 func (provider *JWTProvider) issueToken(sub string, expTime int, isAdmin bool) (string, int, error) {
@@ -135,18 +129,4 @@ func (provider *JWTProvider) ParseToken(tokenString string) (claims *CustomClaim
 	}
 
 	return &cc, nil
-}
-
-func (provider *JWTProvider) CompareToken(token1, token2 string) (bool, error) {
-	// Handle Expired Token
-	if token1 == "" || token2 == "" {
-		return false, ErrRequireLogin
-	}
-
-	// Compare tokens
-	if token1 != token2 {
-		return false, ErrInvalidToken
-	}
-
-	return true, nil
 }
